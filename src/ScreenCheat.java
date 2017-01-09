@@ -1,6 +1,11 @@
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
@@ -10,30 +15,71 @@ import javax.swing.JFrame;
  */
 
 
-public class ScreenCheat extends JComponent{
+public class ScreenCheat extends JComponent implements KeyListener{
 
     // Height and Width of our game
-    static final int WIDTH = 800;
-    static final int HEIGHT = 600;
+    static final int WIDTH = 384;
+    static final int HEIGHT = 768;
     
     // sets the framerate and delay for our game
     // you just need to select an approproate framerate
     long desiredFPS = 60;
     long desiredTime = (1000)/desiredFPS;
+    BufferedImage stage = ImageHelper.loadImage("First Stage.png");
     
-
-    
+    //player one variables
+    int P1angle = 0;
+    double P1x = WIDTH/2;
+    double P1y = HEIGHT/2; 
+    boolean P1moveForward = false;
+    boolean P1moveBack = false;
+    private boolean P1rotateR;
+    private boolean P1rotateL;
+    //player 2 variables
+    int P2angle = 0;
+    double P2x = WIDTH/2;
+    double P2y = HEIGHT/2; 
+    boolean P2moveForward = false;
+    boolean P2moveBack = false;
+    private boolean P2rotateR;
+    private boolean P2rotateL;
     // drawing of the game happens in here
     // we use the Graphics object, g, to perform the drawing
     // NOTE: This is already double buffered!(helps with framerate/speed)
     @Override
     public void paintComponent(Graphics g)
     {
+        Graphics2D g2d = (Graphics2D)g;
         // always clear the screen first!
+        //create background color
+        Color background = new Color(82, 82, 82);
+        //clear the screen for a new animation
         g.clearRect(0, 0, WIDTH, HEIGHT);
         
-        // GAME DRAWING GOES HERE 
+        // GAME DRAWING GOES HERE
         
+        //set back ground to the stage back ground colour
+        g.setColor(background);
+        //
+        g.fillRect(0,0,WIDTH,HEIGHT);
+        //draw the stage image
+        g.drawImage(stage, -192, 0, 768,768, null);
+        //set the color of the player
+        
+        //player one
+        g.setColor(Color.BLACK);
+        g2d.translate(P1x+25, P1y+25);
+        g2d.rotate(Math.toRadians(P1angle));
+        g.fillRect(-6, -6, 12, 12);
+        g2d.rotate(-Math.toRadians(P1angle));
+        g2d.translate(-P1x-25, -P1y-25);
+        //player two
+        g.setColor(Color.BLUE);
+        g2d.translate(P2x+25, P2y+25);
+        g2d.rotate(Math.toRadians(P2angle));
+        g.fillRect(-6, -6, 12, 12);
+        g2d.rotate(-Math.toRadians(P2angle));
+        g2d.translate(-P2x-25, -P2y-25);
         
         // GAME DRAWING ENDS HERE
     }
@@ -59,7 +105,44 @@ public class ScreenCheat extends JComponent{
             // all your game rules and move is done in here
             // GAME LOGIC STARTS HERE 
             
-            
+            //Player one
+            if(P1rotateR){
+                P1angle = (P1angle + 3)%360;
+            }
+            if(P1rotateL){
+                P1angle = (P1angle - 3)%360;
+            }
+            if(P1moveForward){
+               double dy = (-2*Math.cos(Math.toRadians(P1angle)))/2;
+               double dx = (2*Math.sin(Math.toRadians(P1angle)))/2;
+               P1y = P1y + dy;
+               P1x = P1x + dx;
+            }
+            if(P1moveBack){
+               double dy = (-2*Math.cos(Math.toRadians(P1angle)))/2;
+               double dx = (2*Math.sin(Math.toRadians(P1angle)))/2;
+               P1y = P1y - dy;
+               P1x = P1x - dx;
+            }
+            //player 2
+            if(P2rotateR){
+                P2angle = (P2angle + 3)%360;
+            }
+            if(P2rotateL){
+                P2angle = (P2angle - 3)%360;
+            }
+            if(P2moveForward){
+               double dy = (-2*Math.cos(Math.toRadians(P2angle)))/2;
+               double dx = (2*Math.sin(Math.toRadians(P2angle)))/2;
+               P2y = P2y + dy;
+               P2x = P2x + dx;
+            }
+            if(P2moveBack){
+               double dy = (-2*Math.cos(Math.toRadians(P2angle)))/2;
+               double dx = (2*Math.sin(Math.toRadians(P2angle)))/2;
+               P2y = P2y - dy;
+               P2x = P2x - dx;
+            }
 
             // GAME LOGIC ENDS HERE 
             
@@ -101,7 +184,7 @@ public class ScreenCheat extends JComponent{
         game.setPreferredSize(new Dimension(WIDTH,HEIGHT));
         // adds the game to the window
         frame.add(game);
-         
+        frame.addKeyListener(game);
         // sets some options and size of the window automatically
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -111,5 +194,72 @@ public class ScreenCheat extends JComponent{
         
         // starts my game loop
         game.run();
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        int key = e.getKeyCode();
+        //Player one
+        if(key == KeyEvent.VK_W){
+            P1moveForward = true;
+        }
+        if(key == KeyEvent.VK_S){
+            P1moveBack = true;
+        }
+        if(key == KeyEvent.VK_E){
+            P1rotateR = true;
+        }
+        if(key == KeyEvent.VK_Q){
+            P1rotateL = true;
+        }
+        //Player two
+        if(key == KeyEvent.VK_I){
+            P2moveForward = true;
+        }
+        if(key == KeyEvent.VK_K){
+            P2moveBack = true;
+        }
+        if(key == KeyEvent.VK_U){
+            P2rotateR = true;
+        }
+        if(key == KeyEvent.VK_O){
+            P2rotateL = true;
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        int key = e.getKeyCode();
+        //player one
+        if(key == KeyEvent.VK_W){
+            P1moveForward = false;
+        }
+        if(key == KeyEvent.VK_S){
+            P1moveBack = false;
+        }
+        if(key == KeyEvent.VK_E){
+            P1rotateR = false;
+        }
+        if(key == KeyEvent.VK_Q){
+            P1rotateL = false;
+        }
+        //player two
+        if(key == KeyEvent.VK_I){
+            P2moveForward = false;
+        }
+        if(key == KeyEvent.VK_K){
+            P2moveBack = false;
+        }
+        if(key == KeyEvent.VK_U){
+            P2rotateR = false;
+        }
+        if(key == KeyEvent.VK_O){
+            P2rotateL = false;
+        }
     }
 }
