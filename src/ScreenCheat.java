@@ -18,7 +18,7 @@ import javax.swing.JFrame;
 public class ScreenCheat extends JComponent implements KeyListener{
 
     // Height and Width of our game
-    static final int WIDTH = 384;
+    static final int WIDTH = 768;
     static final int HEIGHT = 768;
     
     // sets the framerate and delay for our game
@@ -28,19 +28,32 @@ public class ScreenCheat extends JComponent implements KeyListener{
     BufferedImage stage = ImageHelper.loadImage("First Stage.png");
     
     //player one variables
-    int P1angle = 0;
+    
     double P1x = WIDTH/2;
     double P1y = HEIGHT/2; 
+    //directional
     boolean P1moveForward = false;
     boolean P1moveBack = false;
+    boolean P1moveRight = false;
+    boolean P1moveLeft = false;
+    //original angle
+    int P1angle = 0;
+    //
     private boolean P1rotateR;
     private boolean P1rotateL;
+    
     //player 2 variables
-    int P2angle = 0;
+    
     double P2x = WIDTH/2;
     double P2y = HEIGHT/2; 
+    //directional
     boolean P2moveForward = false;
     boolean P2moveBack = false;
+    boolean P2moveRight = false;
+    boolean P2moveLeft = false;
+    //original angle
+    int P2angle = 0;
+    //
     private boolean P2rotateR;
     private boolean P2rotateL;
     // drawing of the game happens in here
@@ -63,7 +76,7 @@ public class ScreenCheat extends JComponent implements KeyListener{
         //
         g.fillRect(0,0,WIDTH,HEIGHT);
         //draw the stage image
-        g.drawImage(stage, -192, 0, 768,768, null);
+        g.drawImage(stage, 0, 0, 768,768, null);
         //set the color of the player
         
         //player one
@@ -105,25 +118,56 @@ public class ScreenCheat extends JComponent implements KeyListener{
             // all your game rules and move is done in here
             // GAME LOGIC STARTS HERE 
             
+            
+            
+            
+            
+            
+            
             //Player one
+            //test if boolean player 1 rotate right is true
             if(P1rotateR){
+                //adjust his angle
                 P1angle = (P1angle + 3)%360;
             }
+            //test if boolean player 1 rotate left is true
             if(P1rotateL){
+                //adjust his angle
                 P1angle = (P1angle - 3)%360;
             }
+            //test if boolean player 1 move forward is true
             if(P1moveForward){
-               double dy = (-2*Math.cos(Math.toRadians(P1angle)))/2;
-               double dx = (2*Math.sin(Math.toRadians(P1angle)))/2;
+               //
+               double dy = (-1*Math.cos(Math.toRadians(P1angle)));
+               double dx = (Math.sin(Math.toRadians(P1angle)));
                P1y = P1y + dy;
                P1x = P1x + dx;
             }
+            //test if boolean player 1 move backwards is true
             if(P1moveBack){
-               double dy = (-2*Math.cos(Math.toRadians(P1angle)))/2;
-               double dx = (2*Math.sin(Math.toRadians(P1angle)))/2;
+               double dy = (-1*Math.cos(Math.toRadians(P1angle)));
+               double dx = (Math.sin(Math.toRadians(P1angle)));
                P1y = P1y - dy;
                P1x = P1x - dx;
             }
+            if(P1moveRight){
+               double dy = (Math.cos(Math.toRadians(P1angle + 90)));
+               double dx = (-1*Math.sin(Math.toRadians(P1angle + 90)));
+               P1y = P1y - dy;
+               P1x = P1x - dx;
+            }
+            if(P1moveLeft){
+               double dy = (Math.cos(Math.toRadians(P1angle - 90)));
+               double dx = (-1*Math.sin(Math.toRadians(P1angle - 90)));
+               P1y = P1y - dy;
+               P1x = P1x - dx;
+            }
+            
+            
+            
+            
+            
+            
             //player 2
             if(P2rotateR){
                 P2angle = (P2angle + 3)%360;
@@ -132,25 +176,38 @@ public class ScreenCheat extends JComponent implements KeyListener{
                 P2angle = (P2angle - 3)%360;
             }
             if(P2moveForward){
-               double dy = (-2*Math.cos(Math.toRadians(P2angle)))/2;
-               double dx = (2*Math.sin(Math.toRadians(P2angle)))/2;
+               double dy = (-1*Math.cos(Math.toRadians(P2angle)));
+               double dx = (Math.sin(Math.toRadians(P2angle)));
                P2y = P2y + dy;
                P2x = P2x + dx;
             }
             if(P2moveBack){
-               double dy = (-2*Math.cos(Math.toRadians(P2angle)))/2;
-               double dx = (2*Math.sin(Math.toRadians(P2angle)))/2;
+               double dy = (-1*Math.cos(Math.toRadians(P2angle)));
+               double dx = (Math.sin(Math.toRadians(P2angle)));
                P2y = P2y - dy;
                P2x = P2x - dx;
             }
-
-            // GAME LOGIC ENDS HERE 
+            if(P2moveRight){
+               double dy = (Math.cos(Math.toRadians(P2angle + 90)));
+               double dx = (-1*Math.sin(Math.toRadians(P2angle + 90)));
+               P2y = P2y - dy;
+               P2x = P2x - dx;
+            }
+            if(P2moveLeft){
+               double dy = (Math.cos(Math.toRadians(P2angle - 90)));
+               double dx = (-1*Math.sin(Math.toRadians(P2angle - 90)));
+               P2y = P2y - dy;
+               P2x = P2x - dx;
+            }
             
+            
+            
+            
+            
+            
+            // GAME LOGIC ENDS HERE 
             // update the drawing (calls paintComponent)
             repaint();
-            
-            
-            
             // SLOWS DOWN THE GAME BASED ON THE FRAMERATE ABOVE
             // USING SOME SIMPLE MATH
             deltaTime = System.currentTimeMillis() - startTime;
@@ -208,6 +265,12 @@ public class ScreenCheat extends JComponent implements KeyListener{
         if(key == KeyEvent.VK_W){
             P1moveForward = true;
         }
+        if(key == KeyEvent.VK_A){
+            P1moveLeft = true;
+        }
+        if(key == KeyEvent.VK_D){
+            P1moveRight = true;
+        }
         if(key == KeyEvent.VK_S){
             P1moveBack = true;
         }
@@ -217,17 +280,29 @@ public class ScreenCheat extends JComponent implements KeyListener{
         if(key == KeyEvent.VK_Q){
             P1rotateL = true;
         }
+        
+        
+        
+        
+        
+        
         //Player two
         if(key == KeyEvent.VK_I){
             P2moveForward = true;
         }
+        if(key == KeyEvent.VK_J){
+            P2moveLeft = true;
+        }
+        if(key == KeyEvent.VK_L){
+            P2moveRight = true;
+        }
         if(key == KeyEvent.VK_K){
             P2moveBack = true;
         }
-        if(key == KeyEvent.VK_U){
+        if(key == KeyEvent.VK_O){
             P2rotateR = true;
         }
-        if(key == KeyEvent.VK_O){
+        if(key == KeyEvent.VK_U){
             P2rotateL = true;
         }
     }
@@ -239,6 +314,12 @@ public class ScreenCheat extends JComponent implements KeyListener{
         if(key == KeyEvent.VK_W){
             P1moveForward = false;
         }
+        if(key == KeyEvent.VK_A){
+            P1moveLeft = false;
+        }
+        if(key == KeyEvent.VK_D){
+            P1moveRight = false;
+        }
         if(key == KeyEvent.VK_S){
             P1moveBack = false;
         }
@@ -248,17 +329,29 @@ public class ScreenCheat extends JComponent implements KeyListener{
         if(key == KeyEvent.VK_Q){
             P1rotateL = false;
         }
+        
+        
+        
+        
+        
+        
         //player two
         if(key == KeyEvent.VK_I){
             P2moveForward = false;
         }
+        if(key == KeyEvent.VK_J){
+            P2moveLeft = false;
+        }
+        if(key == KeyEvent.VK_L){
+            P2moveRight = false;
+        }
         if(key == KeyEvent.VK_K){
             P2moveBack = false;
         }
-        if(key == KeyEvent.VK_U){
+        if(key == KeyEvent.VK_O){
             P2rotateR = false;
         }
-        if(key == KeyEvent.VK_O){
+        if(key == KeyEvent.VK_U){
             P2rotateL = false;
         }
     }
