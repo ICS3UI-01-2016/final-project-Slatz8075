@@ -85,7 +85,6 @@ public class ScreenCheat extends JComponent implements KeyListener {
         g2d.
         g.drawImage(stage, P1x, P1x, P1x, P1x, P1x, P1x, P1x, P1x, background, this);
 
-
         //player one
         g.setColor(Color.RED);
         //g2d.translate(P1x + 25, P1y + 25);
@@ -101,12 +100,6 @@ public class ScreenCheat extends JComponent implements KeyListener {
         g.fillRect(-6, -6, 12, 12);
         //g2d.rotate(-Math.toRadians(P2angle));
         g2d.translate(-P2x - 25, -P2y - 25);
-
-
-
-
-
-
 
         // GAME DRAWING ENDS HERE
     }

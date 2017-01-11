@@ -1,6 +1,8 @@
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
@@ -14,8 +16,8 @@ import javax.swing.JFrame;
 public class TestRotation extends JComponent implements KeyListener{
 
     // Height and Width of our game
-    static final int WIDTH = 800;
-    static final int HEIGHT = 600;
+    static final int WIDTH = 768;
+    static final int HEIGHT = 768;
     // sets the framerate and delay for our game
     // you just need to select an approproate framerate
     long desiredFPS = 60;
@@ -35,12 +37,20 @@ public class TestRotation extends JComponent implements KeyListener{
     // NOTE: This is already double buffered!(helps with framerate/speed)
     @Override
     public void paintComponent(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
         // always clear the screen first!
         g.clearRect(0, 0, WIDTH, HEIGHT);
 
         // GAME DRAWING GOES HERE 
-        g.drawImage(stage, 0, 0, 768, 768, null);
-
+        g.clipRect(0, 0, WIDTH, HEIGHT/2);
+        g2d.translate(WIDTH/2 - x, 150-y);
+        g2d.rotate(Math.toRadians(angle));
+        g.drawImage(stage, 0, 0, WIDTH, HEIGHT, null);
+        g2d.rotate(Math.toRadians(-angle));
+        g2d.translate(-WIDTH/2 + x, -150+y);
+        
+        g.setColor(Color.red);
+        g.fillRect(WIDTH/2 - 10, 150 - 10, 20, 20);
         // GAME DRAWING ENDS HERE
     }
 
@@ -62,7 +72,16 @@ public class TestRotation extends JComponent implements KeyListener{
             // all your game rules and move is done in here
             // GAME LOGIC STARTS HERE 
 
-
+            if(up){
+                y = y - 1;
+            }
+            if(down){
+                y = y + 1;
+            }
+            if(right){
+                angle = (angle+1)%360;
+            }
+           
 
             // GAME LOGIC ENDS HERE 
 
