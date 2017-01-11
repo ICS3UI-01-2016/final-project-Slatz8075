@@ -82,8 +82,8 @@ public class ScreenCheat extends JComponent implements KeyListener {
         
         g.drawImage(stage, P1x, P1y, 384, 384, this);
         g.drawImage(stage, P2x, P2y, 384, 384, this);
-        g2d.
-        g.drawImage(stage, P1x, P1x, P1x, P1x, P1x, P1x, P1x, P1x, background, this);
+        
+        
 
         //player one
         g.setColor(Color.RED);

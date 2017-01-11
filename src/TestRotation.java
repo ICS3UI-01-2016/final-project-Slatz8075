@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -28,8 +29,8 @@ public class TestRotation extends JComponent implements KeyListener{
     boolean right = false;
     boolean left = false;
     
-    int x = 300;
-    int y = 300;
+    int x = WIDTH/2;
+    int y = (HEIGHT/4);
     int angle = 0;
 
     // drawing of the game happens in here
@@ -43,16 +44,20 @@ public class TestRotation extends JComponent implements KeyListener{
 
         // GAME DRAWING GOES HERE 
         g.clipRect(0, 0, WIDTH, HEIGHT/2);
-        g2d.translate(x, y);
-        g2d.rotate(Math.toRadians(angle));
-        g2d.translate(- x, -y);
-        g.drawImage(stage, WIDTH/2 - x, 150-y, WIDTH, HEIGHT, null);
-        g2d.translate(x, y);
-        g2d.rotate(Math.toRadians(-angle));
-        g2d.translate(- x, -y);
+//        g2d.translate(x, y);
+//        g2d.rotate(Math.toRadians(angle));
+//        g2d.translate(- x, -y);
+        AffineTransform tx = new AffineTransform();
+        tx.rotate(Math.toRadians(angle), x, y);
+        tx.translate(WIDTH/2-x, 192-y);
+        g2d.drawImage(stage, tx, null);
         
+        tx.setToIdentity();
         g.setColor(Color.red);
-        g.fillRect(WIDTH/2 - 10, 150 - 10, 20, 20);
+        g.fillRect(WIDTH/2 - 10, 192 - 10, 20, 20);
+        
+        g.setColor(Color.yellow);
+        g.fillRect(x-5, y-5, 10, 10);
         // GAME DRAWING ENDS HERE
     }
 
