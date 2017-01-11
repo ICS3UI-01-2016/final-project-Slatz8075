@@ -43,11 +43,13 @@ public class TestRotation extends JComponent implements KeyListener{
 
         // GAME DRAWING GOES HERE 
         g.clipRect(0, 0, WIDTH, HEIGHT/2);
-        g2d.translate(WIDTH/2 - x, 150-y);
+        g2d.translate(x, y);
         g2d.rotate(Math.toRadians(angle));
-        g.drawImage(stage, 0, 0, WIDTH, HEIGHT, null);
+        g2d.translate(- x, -y);
+        g.drawImage(stage, WIDTH/2 - x, 150-y, WIDTH, HEIGHT, null);
+        g2d.translate(x, y);
         g2d.rotate(Math.toRadians(-angle));
-        g2d.translate(-WIDTH/2 + x, -150+y);
+        g2d.translate(- x, -y);
         
         g.setColor(Color.red);
         g.fillRect(WIDTH/2 - 10, 150 - 10, 20, 20);
