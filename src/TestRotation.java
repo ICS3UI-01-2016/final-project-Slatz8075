@@ -14,7 +14,7 @@ import javax.swing.JFrame;
  *
  * @author slatz8075
  */
-public class TestRotation extends JComponent implements KeyListener{
+public class TestRotation extends JComponent implements KeyListener {
 
     // Height and Width of our game
     static final int WIDTH = 768;
@@ -26,11 +26,10 @@ public class TestRotation extends JComponent implements KeyListener{
     BufferedImage stage = ImageHelper.loadImage("First Stage.png");
     boolean up = false;
     boolean down = false;
-    boolean right = false;
-    boolean left = false;
-    
-    int x = WIDTH/2;
-    int y = (HEIGHT/4);
+    boolean rotateRight = false;
+    boolean rotateLeft = false;
+    int x = WIDTH / 2;
+    int y = HEIGHT / 4;
     int angle = 0;
 
     // drawing of the game happens in here
@@ -43,21 +42,21 @@ public class TestRotation extends JComponent implements KeyListener{
         g.clearRect(0, 0, WIDTH, HEIGHT);
 
         // GAME DRAWING GOES HERE 
-        g.clipRect(0, 0, WIDTH, HEIGHT/2);
+        g.clipRect(0, 0, WIDTH, HEIGHT / 2);
 //        g2d.translate(x, y);
 //        g2d.rotate(Math.toRadians(angle));
 //        g2d.translate(- x, -y);
         AffineTransform tx = new AffineTransform();
         tx.rotate(Math.toRadians(angle), x, y);
-        tx.translate(WIDTH/2-x, 192-y);
+        tx.translate(WIDTH / 2 - x, 192 -y);
         g2d.drawImage(stage, tx, null);
-        
+
         tx.setToIdentity();
         g.setColor(Color.red);
-        g.fillRect(WIDTH/2 - 10, 192 - 10, 20, 20);
-        
+        g.fillRect(WIDTH / 2 - 10, 192 - 10, 20, 20);
+
         g.setColor(Color.yellow);
-        g.fillRect(x-5, y-5, 10, 10);
+        g.fillRect(x - 5, y - 5, 10, 10);
         // GAME DRAWING ENDS HERE
     }
 
@@ -79,16 +78,19 @@ public class TestRotation extends JComponent implements KeyListener{
             // all your game rules and move is done in here
             // GAME LOGIC STARTS HERE 
 
-            if(up){
-                y = y - 1;
-            }
-            if(down){
+            if (up) {
                 y = y + 1;
             }
-            if(right){
-                angle = (angle+1)%360;
+            if (down) {
+                y = y - 1;
             }
-           
+            if (rotateRight) {
+                angle = (angle - 2) % 360;
+            }
+            if (rotateLeft) {
+                angle = (angle + 2) % 360;
+            }
+
 
             // GAME LOGIC ENDS HERE 
 
@@ -142,44 +144,43 @@ public class TestRotation extends JComponent implements KeyListener{
 
     @Override
     public void keyTyped(KeyEvent e) {
-        
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
-        switch (key){
-                case KeyEvent.VK_UP:
-                    up = true;
-                    break;
-                case KeyEvent.VK_DOWN:
-                    down = true;
-                    break;
-                case KeyEvent.VK_RIGHT:
-                    right = true;
-                    break;
-                case KeyEvent.VK_LEFT:
-                    left = true;
-                    break;
+        switch (key) {
+            case KeyEvent.VK_UP:
+                up = true;
+                break;
+            case KeyEvent.VK_DOWN:
+                down = true;
+                break;
+            case KeyEvent.VK_RIGHT:
+                rotateRight = true;
+                break;
+            case KeyEvent.VK_LEFT:
+                rotateLeft = true;
+                break;
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
         int key = e.getKeyCode();
-        switch (key){
-                case KeyEvent.VK_UP:
-                    up = false;
-                    break;
-                case KeyEvent.VK_DOWN:
-                    down = false;
-                    break;
-                case KeyEvent.VK_RIGHT:
-                    right = false;
-                    break;
-                case KeyEvent.VK_LEFT:
-                    left = false;
-                    break;
+        switch (key) {
+            case KeyEvent.VK_UP:
+                up = false;
+                break;
+            case KeyEvent.VK_DOWN:
+                down = false;
+                break;
+            case KeyEvent.VK_RIGHT:
+                rotateRight = false;
+                break;
+            case KeyEvent.VK_LEFT:
+                rotateLeft = false;
+                break;
         }
     }
 }
