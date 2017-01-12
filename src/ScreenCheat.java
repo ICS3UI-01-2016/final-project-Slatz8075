@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -23,9 +24,10 @@ public class ScreenCheat extends JComponent implements KeyListener {
     long desiredFPS = 60;
     long desiredTime = (1000) / desiredFPS;
     BufferedImage stage = ImageHelper.loadImage("First Stage.png");
+    
     //player one variables
-    int P1x = 384;
-    int P1y = 576;
+    int P1x = WIDTH/2;
+    int P1y = HEIGHT/4;
     //directional
     boolean P1moveForward = false;
     boolean P1moveBack = false;
@@ -33,12 +35,13 @@ public class ScreenCheat extends JComponent implements KeyListener {
     boolean P1moveLeft = false;
     //original angle
     int P1angle = 0;
-    //
+    //Rotational Commands
     private boolean P1rotateR;
     private boolean P1rotateL;
+    
     //player 2 variables
-    int P2x = 384;
-    int P2y = 192;
+    int P2x = WIDTH/2;
+    int P2y = (HEIGHT/4)*3;
     //directional
     boolean P2moveForward = false;
     boolean P2moveBack = false;
@@ -46,9 +49,10 @@ public class ScreenCheat extends JComponent implements KeyListener {
     boolean P2moveLeft = false;
     //original angle
     int P2angle = 0;
-    //
+    //Rotational Commands
     private boolean P2rotateR;
     private boolean P2rotateL;
+    
     // drawing of the game happens in here
     // we use the Graphics object, g, to perform the drawing
     // NOTE: This is already double buffered!(helps with framerate/speed)
@@ -63,43 +67,40 @@ public class ScreenCheat extends JComponent implements KeyListener {
         g.clearRect(0, 0, WIDTH, HEIGHT);
 
         // GAME DRAWING GOES HERE
-
-
-
-
-
-
-
         //set back ground to the stage back ground colour
         g.setColor(background);
         //
         g.fillRect(0, 0, WIDTH, HEIGHT);
-        //draw the stage image
-
-        //g.drawImage(stage, 0, 0, 768,768, null);
-        //set the color of the player
-
         
-        g.drawImage(stage, P1x, P1y, 384, 384, this);
-        g.drawImage(stage, P2x, P2y, 384, 384, this);
+        //Player one
+        g.clipRect(0, 0, WIDTH, HEIGHT / 2);
+//g2d.translate(x, y);
+//g2d.rotate(Math.toRadians(angle));
+//g2d.translate(- x, -y);
+        AffineTransform P1tx = new AffineTransform();
+        P1tx.rotate(Math.toRadians(P1angle), P1x, P1y);
+        P1tx.translate(WIDTH / 2 - P1x, HEIGHT/3 - P1y);
+        g2d.drawImage(stage, P1tx, null);
+        P1tx.setToIdentity();
+        g.setColor(Color.red);
+        g.fillRect(WIDTH/2 - 5, HEIGHT/3 - 5, 10, 10);
+        g.setColor(Color.yellow);
+        g.fillRect(P1x - 2, P1y - 2, 4, 4);
         
-        
-
-        //player one
-        g.setColor(Color.RED);
-        //g2d.translate(P1x + 25, P1y + 25);
-        g2d.rotate(Math.toRadians(P1angle));
-        g.fillRect(-6, -6, 12, 12);
-        //g2d.rotate(-Math.toRadians(P1angle));
-        g2d.translate(-P1x - 25, -P1y - 25);
-
-        //player two
+        //Player two
+        g.clipRect(0, 384, WIDTH, 384);
+//g2d.translate(x, y);
+//g2d.rotate(Math.toRadians(angle));
+//g2d.translate(- x, -y);
+        AffineTransform P2tx = new AffineTransform();
+        P2tx.rotate(Math.toRadians(P2angle), P2x, P2y);
+        P2tx.translate(WIDTH / 2 - P2x, (HEIGHT - (HEIGHT/4)) - P2y);
+        g2d.drawImage(stage, P2tx, null);
+        P2tx.setToIdentity();
         g.setColor(Color.BLUE);
-        //g2d.translate(P2x + 25, P2y + 25);
-        g2d.rotate(Math.toRadians(P2angle));
-        g.fillRect(-6, -6, 12, 12);
-        //g2d.rotate(-Math.toRadians(P2angle));
-        g2d.translate(-P2x - 25, -P2y - 25);
+        g.fillRect(WIDTH/2 - 5, (HEIGHT - (HEIGHT/4)) - 5, 10, 10);
+        g.setColor(Color.yellow);
+        g.fillRect(P2x - 2, P2y - 2, 4, 4);
 
         // GAME DRAWING ENDS HERE
     }
@@ -121,90 +122,73 @@ public class ScreenCheat extends JComponent implements KeyListener {
 
             // all your game rules and move is done in here
             // GAME LOGIC STARTS HERE 
-
+            
             //Player one
-            //test if boolean player 1 rotate right is true
+            //test to see if the respective button is being pressed
             if (P1rotateR) {
-                //adjust his angle
-                P1angle = (P1angle + 3) % 360;
+                //adjust the angle of the stage correspondingly
+                P1angle = (P1angle - 2) % 360;
             }
-            //test if boolean player 1 rotate left is true
+            //test to see if the respective button is being pressed
             if (P1rotateL) {
-                //adjust his angle
-                P1angle = (P1angle - 3) % 360;
+                //adjust the angle of the stage correspondingly
+                P1angle = (P1angle + 2) % 360;
             }
-            //test if boolean player 1 move forward is true
+            //test to see if the respective button is being pressed
             if (P1moveForward) {
-                //
-                int P1dy = (int) Math.ceil(-1 * Math.cos(Math.toRadians(P1angle)));
-                int P1dx = (int) Math.ceil(Math.sin(Math.toRadians(P1angle)));
-                P1y = P1y + P1dy;
-                P1x = P1x + P1dx;
+                //adjust the position stage underneath player 1
+                P1y = P1y - 1;
             }
-            //test if boolean player 1 move backwards is true
+            //test to see if the respective button is being pressed
             if (P1moveBack) {
-                int P1dy = (int) Math.ceil(-1 * Math.cos(Math.toRadians(P1angle)));
-                int P1dx = (int) Math.ceil(Math.sin(Math.toRadians(P1angle)));
-                P1y = P1y - P1dy;
-                P1x = P1x - P1dx;
+                //adjust the position stage underneath player 1
+                P1y = P1y + 1;
             }
+            //test to see if the respective button is being pressed
             if (P1moveRight) {
-                int P1dy = (int) Math.ceil(Math.cos(Math.toRadians(P1angle + 90)));
-                int P1dx = (int) Math.ceil(-1 * Math.sin(Math.toRadians(P1angle + 90)));
-                P1y = P1y - P1dy;
-                P1x = P1x - P1dx;
+                //adjust the position stage underneath player 1
+                P1x = P1x + 1;
             }
+            //test to see if the respective button is being pressed
             if (P1moveLeft) {
-                int P1dy = (int) Math.ceil(Math.cos(Math.toRadians(P1angle - 90)));
-                int P1dx = (int) Math.ceil(-1 * Math.sin(Math.toRadians(P1angle - 90)));
-                P1y = P1y - P1dy;
-                P1x = P1x - P1dx;
+                //adjust the position stage underneath player 1
+                P1x = P1x - 1;
             }
-
-
-
-
-
 
             //player 2
+            //test to see if the respective button is being pressed
             if (P2rotateR) {
-                P2angle = (P2angle + 3) % 360;
+                //adjust the angle of the stage correspondingly
+                P2angle = (P1angle - 2) % 360;
             }
+            //test to see if the respective button is being pressed
             if (P2rotateL) {
-                P2angle = (P2angle - 3) % 360;
+                //adjust the angle of the stage correspondingly
+                P2angle = (P1angle + 2) % 360;
             }
+            //test to see if the respective button is being pressed
             if (P2moveForward) {
-                int P2dy = (int) Math.ceil(-1 * Math.cos(Math.toRadians(P2angle)));
-                int P2dx = (int) Math.ceil(Math.sin(Math.toRadians(P2angle)));
-                P2y = P2y + P2dy;
-                P2x = P2x + P2dx;
+                //adjust the position stage underneath player 2
+                P2y = P2y - 1;
             }
+            //test to see if the respective button is being pressed
             if (P2moveBack) {
-                int P2dy = (int) Math.ceil(-1 * Math.cos(Math.toRadians(P2angle)));
-                int P2dx = (int) Math.ceil(Math.sin(Math.toRadians(P2angle)));
-                P2y = P2y - P2dy;
-                P2x = P2x - P2dx;
+                //adjust the position stage underneath player 2
+                P2y = P2y + 1;
             }
+            //test to see if the respective button is being pressed
             if (P2moveRight) {
-                int P2dy = (int) Math.ceil(Math.cos(Math.toRadians(P2angle + 90)));
-                int P2dx = (int) Math.ceil(-1 * Math.sin(Math.toRadians(P2angle + 90)));
-                P2y = P2y - P2dy;
-                P2x = P2x - P2dx;
+                //adjust the position stage underneath player 2
+                P2x = P2x + 1;
             }
+            //test to see if the respective button is being pressed
             if (P2moveLeft) {
-                int P2dy = (int) Math.ceil(Math.cos(Math.toRadians(P2angle - 90)));
-                int P2dx = (int) Math.ceil(-1 * Math.sin(Math.toRadians(P2angle - 90)));
-                P2y = P2y - P2dy;
-                P2x = P2x - P2dx;
+                //adjust the position stage underneath player 2
+                P2x = P2x - 1;
             }
-
-
-
-
-
-
-
+            
             // GAME LOGIC ENDS HERE 
+            
             // update the drawing (calls paintComponent)
             repaint();
             // SLOWS DOWN THE GAME BASED ON THE FRAMERATE ABOVE
@@ -258,47 +242,65 @@ public class ScreenCheat extends JComponent implements KeyListener {
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
         //Player one
+        //test to see if the key has been pressed
         if (key == KeyEvent.VK_W) {
+            //change the state of the boolean from false to true
             P1moveForward = true;
         }
+        //test to see if the key has been pressed
         if (key == KeyEvent.VK_A) {
+            //change the state of the boolean from false to true
             P1moveLeft = true;
         }
+        //test to see if the key has been pressed
         if (key == KeyEvent.VK_D) {
+            //change the state of the boolean from false to true
             P1moveRight = true;
         }
+        //test to see if the key has been pressed
         if (key == KeyEvent.VK_S) {
+            //change the state of the boolean from false to true
             P1moveBack = true;
         }
+        //test to see if the key has been pressed
         if (key == KeyEvent.VK_E) {
+            //change the state of the boolean from false to true
             P1rotateR = true;
         }
+        //test to see if the key has been pressed
         if (key == KeyEvent.VK_Q) {
+            //change the state of the boolean from false to true
             P1rotateL = true;
         }
 
-
-
-
-
-
         //Player two
         if (key == KeyEvent.VK_I) {
+            //change the state of the boolean from false to true
             P2moveForward = true;
         }
+        //test to see if the key has been pressed
         if (key == KeyEvent.VK_J) {
+            //change the state of the boolean from false to true
             P2moveLeft = true;
         }
+        //test to see if the key has been pressed
         if (key == KeyEvent.VK_L) {
+            //change the state of the boolean from false to true
             P2moveRight = true;
         }
+        //test to see if the key has been pressed
         if (key == KeyEvent.VK_K) {
+            //change the state of the boolean from false to true
             P2moveBack = true;
         }
+        //test to see if the key has been pressed
         if (key == KeyEvent.VK_O) {
+            //change the state of the boolean from false to true
             P2rotateR = true;
         }
+        //test to see if the key has been pressed
         if (key == KeyEvent.VK_U) {
+            //change the state of the boolean from false to true
             P2rotateL = true;
         }
     }
@@ -307,47 +309,65 @@ public class ScreenCheat extends JComponent implements KeyListener {
     public void keyReleased(KeyEvent e) {
         int key = e.getKeyCode();
         //player one
+        //test to see if the key has been released
         if (key == KeyEvent.VK_W) {
+            //change the state of the boolean from true back to false
             P1moveForward = false;
         }
+        //test to see if the key has been released
         if (key == KeyEvent.VK_A) {
+            //change the state of the boolean from true back to false
             P1moveLeft = false;
         }
+        //test to see if the key has been released
         if (key == KeyEvent.VK_D) {
+            //change the state of the boolean from true back to false
             P1moveRight = false;
         }
+        //test to see if the key has been released
         if (key == KeyEvent.VK_S) {
+            //change the state of the boolean from true back to false
             P1moveBack = false;
         }
+        //test to see if the key has been released
         if (key == KeyEvent.VK_E) {
+            //change the state of the boolean from true back to false
             P1rotateR = false;
         }
+        //test to see if the key has been released
         if (key == KeyEvent.VK_Q) {
+            //change the state of the boolean from true back to false
             P1rotateL = false;
         }
 
-
-
-
-
-
         //player two
         if (key == KeyEvent.VK_I) {
+            //change the state of the boolean from true back to false
             P2moveForward = false;
         }
+        //test to see if the key has been released
         if (key == KeyEvent.VK_J) {
+            //change the state of the boolean from true back to false
             P2moveLeft = false;
         }
+        //test to see if the key has been released
         if (key == KeyEvent.VK_L) {
+            //change the state of the boolean from true back to false
             P2moveRight = false;
         }
+        //test to see if the key has been released
         if (key == KeyEvent.VK_K) {
+            //change the state of the boolean from true back to false
             P2moveBack = false;
         }
+        //test to see if the key has been released
         if (key == KeyEvent.VK_O) {
+            //change the state of the boolean from true back to false
             P2rotateR = false;
         }
+        //test to see if the key has been released
         if (key == KeyEvent.VK_U) {
+            //change the state of the boolean from true back to false
             P2rotateL = false;
         }
     }
