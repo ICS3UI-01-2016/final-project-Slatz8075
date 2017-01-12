@@ -24,10 +24,9 @@ public class ScreenCheat extends JComponent implements KeyListener {
     long desiredFPS = 60;
     long desiredTime = (1000) / desiredFPS;
     BufferedImage stage = ImageHelper.loadImage("First Stage.png");
-    
     //player one variables
-    int P1x = WIDTH/2;
-    int P1y = HEIGHT/4;
+    int P1x = WIDTH / 2;
+    int P1y = HEIGHT / 4;
     //directional
     boolean P1moveForward = false;
     boolean P1moveBack = false;
@@ -38,10 +37,9 @@ public class ScreenCheat extends JComponent implements KeyListener {
     //Rotational Commands
     private boolean P1rotateR;
     private boolean P1rotateL;
-    
     //player 2 variables
-    int P2x = WIDTH/2;
-    int P2y = (HEIGHT/4)*3;
+    int P2x = WIDTH / 2;
+    int P2y = (HEIGHT / 4) * 3;
     //directional
     boolean P2moveForward = false;
     boolean P2moveBack = false;
@@ -52,11 +50,10 @@ public class ScreenCheat extends JComponent implements KeyListener {
     //Rotational Commands
     private boolean P2rotateR;
     private boolean P2rotateL;
-    
+
     // drawing of the game happens in here
     // we use the Graphics object, g, to perform the drawing
     // NOTE: This is already double buffered!(helps with framerate/speed)
-
     @Override
     public void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
@@ -65,41 +62,52 @@ public class ScreenCheat extends JComponent implements KeyListener {
         Color background = new Color(82, 82, 82);
         //clear the screen for a new animation
         g.clearRect(0, 0, WIDTH, HEIGHT);
-
-        // GAME DRAWING GOES HERE
         //set back ground to the stage back ground colour
         g.setColor(background);
         //
         g.fillRect(0, 0, WIDTH, HEIGHT);
-        
+        // GAME DRAWING GOES HERE
+
         //Player one
+
         AffineTransform P1tx = new AffineTransform();
         P1tx.rotate(Math.toRadians(P1angle), P1x, P1y);
-        P1tx.translate(WIDTH / 2 - P1x, HEIGHT/3 - P1y);
+        // calculate new center of the screen after a rotation has occured
+        // see http://stackoverflow.com/questions/20104611/find-new-coordinates-of-a-point-after-rotation
+        // we will use this coordinate to draw the map at
+        double newP1Y = ((HEIGHT / 4 - P1y) * Math.cos(Math.toRadians(P1angle)) - (WIDTH / 2 - P1x) * Math.sin(Math.toRadians(P1angle)));
+        double newP1X = ((HEIGHT / 4 - P1y) * Math.sin(Math.toRadians(P1angle)) + (WIDTH / 2 - P1x) * Math.cos(Math.toRadians(P1angle)));
+        // translate to the new location
+        P1tx.translate(newP1X, newP1Y);
         g2d.drawImage(stage, P1tx, null);
+        // undo all transformations
         P1tx.setToIdentity();
         g.setColor(Color.RED);
-        g.fillRect(WIDTH/2 - 5, HEIGHT/3 - 5, 10, 10);
-        g.setColor(Color.yellow);
-        g.fillRect(P1x - 2, P1y - 2, 4, 4);
-        
+        g.fillRect(WIDTH / 2 - 5, HEIGHT / 4 - 5, 10, 10);
+
         //draw rectangle beneath p2 screen
         g.setColor(background);
         //
-        g.fillRect(0, HEIGHT/2, WIDTH, HEIGHT/2);
-        
-        //Player two
+        g.fillRect(0, HEIGHT / 2, WIDTH, HEIGHT / 2);
+
+
         g.clipRect(0, HEIGHT / 2, WIDTH, HEIGHT / 2);
+        //Player two
+        //g.clipRect(0, (HEIGHT/2), WIDTH, HEIGHT / 2);
         AffineTransform P2tx = new AffineTransform();
         P2tx.rotate(Math.toRadians(P2angle), P2x, P2y);
-        P2tx.translate(WIDTH / 2 - P2x, (HEIGHT - (HEIGHT/4)) - P2y);
+        // calculate new center of the screen after a rotation has occured
+        // see http://stackoverflow.com/questions/20104611/find-new-coordinates-of-a-point-after-rotation
+        // we will use this coordinate to draw the map at
+        double newP2Y = (((HEIGHT / 4) * 3 - P2y) * Math.cos(Math.toRadians(P2angle)) - (WIDTH / 2 - P2x) * Math.sin(Math.toRadians(P2angle)));
+        double newP2X = (((HEIGHT / 4) * 3 - P2y) * Math.sin(Math.toRadians(P2angle)) + (WIDTH / 2 - P2x) * Math.cos(Math.toRadians(P2angle)));
+        // translate to the new location
+        P2tx.translate(newP2X, newP2Y);
         g2d.drawImage(stage, P2tx, null);
+        // undo all transformations
         P2tx.setToIdentity();
         g.setColor(Color.BLUE);
-        g.fillRect(WIDTH/2 - 5, (HEIGHT - (HEIGHT/4)) - 5, 10, 10);
-        g.setColor(Color.yellow);
-        g.fillRect(P2x - 2, P2y - 2, 4, 4);
-
+        g.fillRect(WIDTH / 2 - 5, (HEIGHT / 4) * 3 - 5, 10, 10);
         // GAME DRAWING ENDS HERE
     }
 
@@ -120,7 +128,7 @@ public class ScreenCheat extends JComponent implements KeyListener {
 
             // all your game rules and move is done in here
             // GAME LOGIC STARTS HERE 
-            
+
             //Player one
             //test to see if the respective button is being pressed
             if (P1rotateR) {
@@ -135,22 +143,34 @@ public class ScreenCheat extends JComponent implements KeyListener {
             //test to see if the respective button is being pressed
             if (P1moveForward) {
                 //adjust the position stage underneath player 1
-                P1y = P1y - 1;
+                double P1dy = (Math.cos(Math.toRadians(P1angle)));
+                double P1dx = (-1 * Math.sin(Math.toRadians(P1angle)));
+                P1y = P1y - (int)P1dy;
+                P1x = P1x + (int)P1dx;
             }
             //test to see if the respective button is being pressed
             if (P1moveBack) {
                 //adjust the position stage underneath player 1
-                P1y = P1y + 1;
+                double P1dy = (-1 *Math.cos(Math.toRadians(P1angle)));
+                double P1dx = (Math.sin(Math.toRadians(P1angle)));
+                P1y = P1y - (int)P1dy;
+                P1x = P1x + (int)P1dx;
             }
             //test to see if the respective button is being pressed
             if (P1moveRight) {
                 //adjust the position stage underneath player 1
-                P1x = P1x + 1;
+                double P1dy = (-1 * Math.cos(Math.toRadians(P1angle)));
+                double P1dx = (Math.sin(Math.toRadians(P1angle)));
+                P1y = P1y + (int)P1dy;
+                P1x = P1x + (int)P1dx;
             }
             //test to see if the respective button is being pressed
             if (P1moveLeft) {
                 //adjust the position stage underneath player 1
-                P1x = P1x - 1;
+                double P1dy = (Math.cos(Math.toRadians(P1angle)));
+                double P1dx = (-1 *Math.sin(Math.toRadians(P1angle)));
+                P1y = P1y - (int)P1dy;
+                P1x = P1x - (int)P1dx;
             }
 
             //player 2
@@ -184,9 +204,9 @@ public class ScreenCheat extends JComponent implements KeyListener {
                 //adjust the position stage underneath player 2
                 P2x = P2x - 1;
             }
-            
+
             // GAME LOGIC ENDS HERE 
-            
+
             // update the drawing (calls paintComponent)
             repaint();
             // SLOWS DOWN THE GAME BASED ON THE FRAMERATE ABOVE

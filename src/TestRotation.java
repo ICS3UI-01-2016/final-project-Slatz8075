@@ -28,8 +28,8 @@ public class TestRotation extends JComponent implements KeyListener {
     boolean down = false;
     boolean rotateRight = false;
     boolean rotateLeft = false;
-    int x = WIDTH / 2;
-    int y = HEIGHT / 4;
+    double x = WIDTH / 2;
+    double y = HEIGHT / 4;
     int angle = 0;
 
     // drawing of the game happens in here
@@ -48,15 +48,18 @@ public class TestRotation extends JComponent implements KeyListener {
 //        g2d.translate(- x, -y);
         AffineTransform tx = new AffineTransform();
         tx.rotate(Math.toRadians(angle), x, y);
-        tx.translate(WIDTH / 2 - x, 192 -y);
+        // calculate new center of the screen after a rotation has occured
+        // see http://stackoverflow.com/questions/20104611/find-new-coordinates-of-a-point-after-rotation
+        // we will use this coordinate to draw the map at
+        double newY =  ((192 - y) * Math.cos(Math.toRadians(angle)) - (WIDTH / 2 - x) * Math.sin(Math.toRadians(angle)));
+        double newX =  ((192 - y) * Math.sin(Math.toRadians(angle)) + (WIDTH / 2 - x) * Math.cos(Math.toRadians(angle)));
+        // translate to the new location
+        tx.translate(newX, newY);
         g2d.drawImage(stage, tx, null);
-
+        // undo all transformations
         tx.setToIdentity();
         g.setColor(Color.red);
         g.fillRect(WIDTH / 2 - 10, 192 - 10, 20, 20);
-
-        g.setColor(Color.yellow);
-        g.fillRect(x - 5, y - 5, 10, 10);
         // GAME DRAWING ENDS HERE
     }
 
@@ -79,10 +82,16 @@ public class TestRotation extends JComponent implements KeyListener {
             // GAME LOGIC STARTS HERE 
 
             if (up) {
-                y = y + 1;
+               double dy = (-2*Math.cos(Math.toRadians(angle)))/2;
+               double dx = (2*Math.sin(Math.toRadians(angle)))/2;
+               y = y + dy;
+               x = x + dx;
             }
             if (down) {
-                y = y - 1;
+               double dy = (2*Math.cos(Math.toRadians(angle)))/2;
+               double dx = (-2*Math.sin(Math.toRadians(angle)))/2;
+               y = y - dy;
+               x = x - dx;
             }
             if (rotateRight) {
                 angle = (angle - 2) % 360;
