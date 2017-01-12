@@ -73,25 +73,23 @@ public class ScreenCheat extends JComponent implements KeyListener {
         g.fillRect(0, 0, WIDTH, HEIGHT);
         
         //Player one
-        g.clipRect(0, 0, WIDTH, HEIGHT / 2);
-//g2d.translate(x, y);
-//g2d.rotate(Math.toRadians(angle));
-//g2d.translate(- x, -y);
         AffineTransform P1tx = new AffineTransform();
         P1tx.rotate(Math.toRadians(P1angle), P1x, P1y);
         P1tx.translate(WIDTH / 2 - P1x, HEIGHT/3 - P1y);
         g2d.drawImage(stage, P1tx, null);
         P1tx.setToIdentity();
-        g.setColor(Color.red);
+        g.setColor(Color.RED);
         g.fillRect(WIDTH/2 - 5, HEIGHT/3 - 5, 10, 10);
         g.setColor(Color.yellow);
         g.fillRect(P1x - 2, P1y - 2, 4, 4);
         
+        //draw rectangle beneath p2 screen
+        g.setColor(background);
+        //
+        g.fillRect(0, HEIGHT/2, WIDTH, HEIGHT/2);
+        
         //Player two
-        g.clipRect(0, 384, WIDTH, 384);
-//g2d.translate(x, y);
-//g2d.rotate(Math.toRadians(angle));
-//g2d.translate(- x, -y);
+        g.clipRect(0, HEIGHT / 2, WIDTH, HEIGHT / 2);
         AffineTransform P2tx = new AffineTransform();
         P2tx.rotate(Math.toRadians(P2angle), P2x, P2y);
         P2tx.translate(WIDTH / 2 - P2x, (HEIGHT - (HEIGHT/4)) - P2y);
