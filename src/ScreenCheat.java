@@ -25,8 +25,8 @@ public class ScreenCheat extends JComponent implements KeyListener {
     long desiredTime = (1000) / desiredFPS;
     BufferedImage stage = ImageHelper.loadImage("First Stage.png");
     //player one variables
-    int P1x = WIDTH / 2;
-    int P1y = HEIGHT / 4;
+    double P1x = WIDTH / 2;
+    double P1y = HEIGHT / 4;
     //directional
     boolean P1moveForward = false;
     boolean P1moveBack = false;
@@ -140,37 +140,48 @@ public class ScreenCheat extends JComponent implements KeyListener {
                 //adjust the angle of the stage correspondingly
                 P1angle = (P1angle + 2) % 360;
             }
+            if (P1angle < 0) {
+                P1angle = 360 + P1angle;
+            }
+
+            double P1dy = (Math.cos(Math.toRadians(P1angle)));
+            double P1dx = (Math.sin(Math.toRadians(P1angle)));
+            if(P1angle >=90 && P1angle <= 180){
+                P1dy = P1dy * -1;
+            }
+            if(P1angle >=180 && P1angle <= 270){
+                P1dy = P1dy * -1;
+                P1dx = P1dx * -1;
+            }
+            if(P1angle >=170 && P1angle <= 360){
+                P1dx = P1dx * -1;
+            }
             //test to see if the respective button is being pressed
             if (P1moveForward) {
                 //adjust the position stage underneath player 1
-                double P1dy = (Math.cos(Math.toRadians(P1angle)));
-                double P1dx = (-1 * Math.sin(Math.toRadians(P1angle)));
-                P1y = P1y - (int)P1dy;
-                P1x = P1x + (int)P1dx;
+                P1y = P1y - P1dy;
+                P1x = P1x + P1dx;
             }
             //test to see if the respective button is being pressed
             if (P1moveBack) {
                 //adjust the position stage underneath player 1
-                double P1dy = (-1 *Math.cos(Math.toRadians(P1angle)));
-                double P1dx = (Math.sin(Math.toRadians(P1angle)));
-                P1y = P1y - (int)P1dy;
-                P1x = P1x + (int)P1dx;
+                
+                P1y = P1y +  P1dy;
+                P1x = P1x +  P1dx;
             }
             //test to see if the respective button is being pressed
             if (P1moveRight) {
                 //adjust the position stage underneath player 1
-                double P1dy = (-1 * Math.cos(Math.toRadians(P1angle)));
-                double P1dx = (Math.sin(Math.toRadians(P1angle)));
-                P1y = P1y + (int)P1dy;
-                P1x = P1x + (int)P1dx;
+                
+                P1y = P1y +  P1dy +90;
+                P1x = P1x +  P1dx +90;
             }
             //test to see if the respective button is being pressed
             if (P1moveLeft) {
                 //adjust the position stage underneath player 1
-                double P1dy = (Math.cos(Math.toRadians(P1angle)));
-                double P1dx = (-1 *Math.sin(Math.toRadians(P1angle)));
-                P1y = P1y - (int)P1dy;
-                P1x = P1x - (int)P1dx;
+                
+                P1y = P1y +  P1dy -90;
+                P1x = P1x +  P1dx -90;
             }
 
             //player 2
@@ -184,6 +195,10 @@ public class ScreenCheat extends JComponent implements KeyListener {
                 //adjust the angle of the stage correspondingly
                 P2angle = (P1angle + 2) % 360;
             }
+            if (P2angle < 0) {
+                P2angle = 360 + P2angle;
+            }
+
             //test to see if the respective button is being pressed
             if (P2moveForward) {
                 //adjust the position stage underneath player 2
@@ -204,6 +219,8 @@ public class ScreenCheat extends JComponent implements KeyListener {
                 //adjust the position stage underneath player 2
                 P2x = P2x - 1;
             }
+
+            System.out.println(P1angle);
 
             // GAME LOGIC ENDS HERE 
 
