@@ -25,7 +25,7 @@ public class ScreenCheat extends JComponent implements KeyListener {
     long desiredTime = (1000) / desiredFPS;
     BufferedImage stage = ImageHelper.loadImage("First Stage.png");
     //player one variables
-    double P1x = WIDTH / 2;
+    double P1x = WIDTH / 2 + 35;
     double P1y = HEIGHT / 4;
     //previous positions used for colision detection
     double previousP1xPosition = P1x;
@@ -41,10 +41,10 @@ public class ScreenCheat extends JComponent implements KeyListener {
     private boolean P1rotateR;
     private boolean P1rotateL;
     //player two variables
-    double P2x = WIDTH / 2;
+    double P2x = WIDTH / 2 - 35;
     double P2y = (HEIGHT / 4) * 3;
     //previous positions used for colision detection
-    double previousP2xPosition = P1x;
+    double previousP2xPosition = P2x;
     double previousP2yPosition = P2y;
     //directional
     boolean P2moveForward = false;
@@ -56,6 +56,14 @@ public class ScreenCheat extends JComponent implements KeyListener {
     //Rotational Commands
     private boolean P2rotateR;
     private boolean P2rotateL;
+    //creat the out line colors of the stage
+    Color orange = new Color(196, 98, 0);
+    Color blue = new Color(91, 130, 181);
+    Color red = new Color(0, 155, 0);
+    Color green = new Color(255, 4, 4);
+    
+    //create background color
+    Color background = new Color(82, 82, 82);
 
     // drawing of the game happens in here
     // we use the Graphics object, g, to perform the drawing
@@ -64,14 +72,13 @@ public class ScreenCheat extends JComponent implements KeyListener {
     public void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         // always clear the screen first!
-        //create background color
-        Color background = new Color(82, 82, 82);
+        
         //clear the screen for a new animation
         g.clearRect(0, 0, WIDTH, HEIGHT);
         //set back ground to the stage back ground colour
         g.setColor(background);
         //
-        g.fillRect(0, 0, WIDTH, HEIGHT);
+        g.fillRect(-WIDTH, -HEIGHT, WIDTH*3, HEIGHT*3);
         // GAME DRAWING GOES HERE
 
         //Player one
@@ -179,10 +186,30 @@ public class ScreenCheat extends JComponent implements KeyListener {
                 P1x = P1x + P1dxl;
             }
             //test to see after all of these transformations if P1 is standing on any color I dont want him to be on.
-            
+            if (stage.getRGB((int) P1x + 5, (int) P1y + 5) == orange.getRGB()
+                    || stage.getRGB((int) P1x + 5, (int) P1y - 5) == orange.getRGB()
+                    || stage.getRGB((int) P1x - 5, (int) P1y + 5) == orange.getRGB()
+                    || stage.getRGB((int) P1x + 5, (int) P1y - 5) == orange.getRGB()
+                    || stage.getRGB((int) P1x + 5, (int) P1y + 5) == red.getRGB()
+                    || stage.getRGB((int) P1x + 5, (int) P1y - 5) == red.getRGB()
+                    || stage.getRGB((int) P1x - 5, (int) P1y + 5) == red.getRGB()
+                    || stage.getRGB((int) P1x + 5, (int) P1y - 5) == red.getRGB()
+                    || stage.getRGB((int) P1x + 5, (int) P1y + 5) == blue.getRGB()
+                    || stage.getRGB((int) P1x + 5, (int) P1y - 5) == blue.getRGB()
+                    || stage.getRGB((int) P1x - 5, (int) P1y + 5) == blue.getRGB()
+                    || stage.getRGB((int) P1x + 5, (int) P1y - 5) == blue.getRGB()
+                    || stage.getRGB((int) P1x + 5, (int) P1y + 5) == green.getRGB()
+                    || stage.getRGB((int) P1x + 5, (int) P1y - 5) == green.getRGB()
+                    || stage.getRGB((int) P1x - 5, (int) P1y + 5) == green.getRGB()
+                    || stage.getRGB((int) P1x + 5, (int) P1y - 5) == green.getRGB()) {
+                //teleport him back to the position he preveiously was at
+                P1x = previousP1xPosition;
+                P1y = previousP1yPosition;
+            }
             //record the x and y position of P1 so I can teleport him back to this if he moves in the next game frame
-            double previousP1xPosition = P1x;
-            double previousP1yPosition = P1y;
+            previousP1xPosition = P1x;
+            previousP1yPosition = P1y;
+
             //player 2
             //test to see if the respective button is being pressed
             if (P2rotateR) {
@@ -231,6 +258,30 @@ public class ScreenCheat extends JComponent implements KeyListener {
                 P2y = P2y + P2dyl;
                 P2x = P2x + P2dxl;
             }
+            //test to see after all of these transformations if P2 is standing on any color I dont want him to be on.
+            if (stage.getRGB((int) P2x + 5, (int) P2y + 5) == orange.getRGB()
+                    || stage.getRGB((int) P2x + 5, (int) P2y - 5) == orange.getRGB()
+                    || stage.getRGB((int) P2x - 5, (int) P2y + 5) == orange.getRGB()
+                    || stage.getRGB((int) P2x + 5, (int) P2y - 5) == orange.getRGB()
+                    || stage.getRGB((int) P2x + 5, (int) P2y + 5) == red.getRGB()
+                    || stage.getRGB((int) P2x + 5, (int) P2y - 5) == red.getRGB()
+                    || stage.getRGB((int) P2x - 5, (int) P2y + 5) == red.getRGB()
+                    || stage.getRGB((int) P2x + 5, (int) P2y - 5) == red.getRGB()
+                    || stage.getRGB((int) P2x + 5, (int) P2y + 5) == blue.getRGB()
+                    || stage.getRGB((int) P2x + 5, (int) P2y - 5) == blue.getRGB()
+                    || stage.getRGB((int) P2x - 5, (int) P2y + 5) == blue.getRGB()
+                    || stage.getRGB((int) P2x + 5, (int) P2y - 5) == blue.getRGB()
+                    || stage.getRGB((int) P2x + 5, (int) P2y + 5) == green.getRGB()
+                    || stage.getRGB((int) P2x + 5, (int) P2y - 5) == green.getRGB()
+                    || stage.getRGB((int) P2x - 5, (int) P2y + 5) == green.getRGB()
+                    || stage.getRGB((int) P2x + 5, (int) P2y - 5) == green.getRGB()) {
+                //teleport him back to the position he preveiously was at
+                P2x = previousP2xPosition;
+                P2y = previousP2yPosition;
+            }
+            //record the x and y position of P2 so I can teleport him back to this if he moves in the next game frame
+            previousP2xPosition = P2x;
+            previousP2yPosition = P2y;
 
             // GAME LOGIC ENDS HERE 
 
