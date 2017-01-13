@@ -27,6 +27,9 @@ public class ScreenCheat extends JComponent implements KeyListener {
     //player one variables
     double P1x = WIDTH / 2;
     double P1y = HEIGHT / 4;
+    //previous positions used for colision detection
+    double previousP1xPosition = P1x;
+    double previousP1yPosition = P1y;
     //directional
     boolean P1moveForward = false;
     boolean P1moveBack = false;
@@ -37,9 +40,12 @@ public class ScreenCheat extends JComponent implements KeyListener {
     //Rotational Commands
     private boolean P1rotateR;
     private boolean P1rotateL;
-    //player 2 variables
-    int P2x = WIDTH / 2;
-    int P2y = (HEIGHT / 4) * 3;
+    //player two variables
+    double P2x = WIDTH / 2;
+    double P2y = (HEIGHT / 4) * 3;
+    //previous positions used for colision detection
+    double previousP2xPosition = P1x;
+    double previousP2yPosition = P2y;
     //directional
     boolean P2moveForward = false;
     boolean P2moveBack = false;
@@ -73,8 +79,6 @@ public class ScreenCheat extends JComponent implements KeyListener {
         AffineTransform P1tx = new AffineTransform();
         P1tx.rotate(Math.toRadians(P1angle), P1x, P1y);
         // calculate new center of the screen after a rotation has occured
-        // see http://stackoverflow.com/questions/20104611/find-new-coordinates-of-a-point-after-rotation
-        // we will use this coordinate to draw the map at
         double newP1Y = ((HEIGHT / 4 - P1y) * Math.cos(Math.toRadians(P1angle)) - (WIDTH / 2 - P1x) * Math.sin(Math.toRadians(P1angle)));
         double newP1X = ((HEIGHT / 4 - P1y) * Math.sin(Math.toRadians(P1angle)) + (WIDTH / 2 - P1x) * Math.cos(Math.toRadians(P1angle)));
         // translate to the new location
@@ -82,7 +86,7 @@ public class ScreenCheat extends JComponent implements KeyListener {
         g2d.drawImage(stage, P1tx, null);
         // undo all transformations
         P1tx.setToIdentity();
-        g.setColor(Color.RED);
+        g.setColor(Color.BLACK);
         g.fillRect(WIDTH / 2 - 5, HEIGHT / 4 - 5, 10, 10);
 
         //draw rectangle beneath p2 screen
@@ -97,8 +101,6 @@ public class ScreenCheat extends JComponent implements KeyListener {
         AffineTransform P2tx = new AffineTransform();
         P2tx.rotate(Math.toRadians(P2angle), P2x, P2y);
         // calculate new center of the screen after a rotation has occured
-        // see http://stackoverflow.com/questions/20104611/find-new-coordinates-of-a-point-after-rotation
-        // we will use this coordinate to draw the map at
         double newP2Y = (((HEIGHT / 4) * 3 - P2y) * Math.cos(Math.toRadians(P2angle)) - (WIDTH / 2 - P2x) * Math.sin(Math.toRadians(P2angle)));
         double newP2X = (((HEIGHT / 4) * 3 - P2y) * Math.sin(Math.toRadians(P2angle)) + (WIDTH / 2 - P2x) * Math.cos(Math.toRadians(P2angle)));
         // translate to the new location
@@ -106,7 +108,7 @@ public class ScreenCheat extends JComponent implements KeyListener {
         g2d.drawImage(stage, P2tx, null);
         // undo all transformations
         P2tx.setToIdentity();
-        g.setColor(Color.BLUE);
+        g.setColor(Color.BLACK);
         g.fillRect(WIDTH / 2 - 5, (HEIGHT / 4) * 3 - 5, 10, 10);
         // GAME DRAWING ENDS HERE
     }
@@ -128,7 +130,6 @@ public class ScreenCheat extends JComponent implements KeyListener {
 
             // all your game rules and move is done in here
             // GAME LOGIC STARTS HERE 
-
             //Player one
             //test to see if the respective button is being pressed
             if (P1rotateR) {
@@ -146,81 +147,90 @@ public class ScreenCheat extends JComponent implements KeyListener {
 
             double P1dy = (Math.cos(Math.toRadians(P1angle)));
             double P1dx = (Math.sin(Math.toRadians(P1angle)));
-            if(P1angle >=90 && P1angle <= 180){
-                P1dy = P1dy * -1;
-            }
-            if(P1angle >=180 && P1angle <= 270){
-                P1dy = P1dy * -1;
-                P1dx = P1dx * -1;
-            }
-            if(P1angle >=170 && P1angle <= 360){
-                P1dx = P1dx * -1;
-            }
+
+
             //test to see if the respective button is being pressed
             if (P1moveForward) {
                 //adjust the position stage underneath player 1
                 P1y = P1y - P1dy;
-                P1x = P1x + P1dx;
+                P1x = P1x - P1dx;
             }
             //test to see if the respective button is being pressed
             if (P1moveBack) {
                 //adjust the position stage underneath player 1
-                
-                P1y = P1y +  P1dy;
-                P1x = P1x +  P1dx;
+
+                P1y = P1y + P1dy;
+                P1x = P1x + P1dx;
             }
             //test to see if the respective button is being pressed
             if (P1moveRight) {
                 //adjust the position stage underneath player 1
-                
-                P1y = P1y +  P1dy +90;
-                P1x = P1x +  P1dx +90;
+                double P1dyr = (Math.cos(Math.toRadians(P1angle + 90)));
+                double P1dxr = (Math.sin(Math.toRadians(P1angle + 90)));
+                P1y = P1y + P1dyr;
+                P1x = P1x + P1dxr;
             }
             //test to see if the respective button is being pressed
             if (P1moveLeft) {
                 //adjust the position stage underneath player 1
-                
-                P1y = P1y +  P1dy -90;
-                P1x = P1x +  P1dx -90;
+                double P1dyl = (Math.cos(Math.toRadians(P1angle - 90)));
+                double P1dxl = (Math.sin(Math.toRadians(P1angle - 90)));
+                P1y = P1y + P1dyl;
+                P1x = P1x + P1dxl;
             }
-
+            //test to see after all of these transformations if P1 is standing on any color I dont want him to be on.
+            
+            //record the x and y position of P1 so I can teleport him back to this if he moves in the next game frame
+            double previousP1xPosition = P1x;
+            double previousP1yPosition = P1y;
             //player 2
             //test to see if the respective button is being pressed
             if (P2rotateR) {
                 //adjust the angle of the stage correspondingly
-                P2angle = (P1angle - 2) % 360;
+                P2angle = (P2angle - 2) % 360;
             }
             //test to see if the respective button is being pressed
             if (P2rotateL) {
                 //adjust the angle of the stage correspondingly
-                P2angle = (P1angle + 2) % 360;
+                P2angle = (P2angle + 2) % 360;
             }
             if (P2angle < 0) {
                 P2angle = 360 + P2angle;
             }
 
+            double P2dy = (Math.cos(Math.toRadians(P2angle)));
+            double P2dx = (Math.sin(Math.toRadians(P2angle)));
+
+
             //test to see if the respective button is being pressed
             if (P2moveForward) {
                 //adjust the position stage underneath player 2
-                P2y = P2y - 1;
+                P2y = P2y - P2dy;
+                P2x = P2x - P2dx;
             }
             //test to see if the respective button is being pressed
             if (P2moveBack) {
                 //adjust the position stage underneath player 2
-                P2y = P2y + 1;
+
+                P2y = P2y + P2dy;
+                P2x = P2x + P2dx;
             }
             //test to see if the respective button is being pressed
             if (P2moveRight) {
                 //adjust the position stage underneath player 2
-                P2x = P2x + 1;
+                double P2dyr = (Math.cos(Math.toRadians(P2angle + 90)));
+                double P2dxr = (Math.sin(Math.toRadians(P2angle + 90)));
+                P2y = P2y + P2dyr;
+                P2x = P2x + P2dxr;
             }
             //test to see if the respective button is being pressed
             if (P2moveLeft) {
                 //adjust the position stage underneath player 2
-                P2x = P2x - 1;
+                double P2dyl = (Math.cos(Math.toRadians(P2angle - 90)));
+                double P2dxl = (Math.sin(Math.toRadians(P2angle - 90)));
+                P2y = P2y + P2dyl;
+                P2x = P2x + P2dxl;
             }
-
-            System.out.println(P1angle);
 
             // GAME LOGIC ENDS HERE 
 
