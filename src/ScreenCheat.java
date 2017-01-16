@@ -35,6 +35,12 @@ public class ScreenCheat extends JComponent implements KeyListener {
     boolean P1moveBack = false;
     boolean P1moveRight = false;
     boolean P1moveLeft = false;
+    //weapon changer monitor
+    boolean P1changeWeapon = false;
+    //test to see if their weapon has been fired
+    boolean P1shootWeapon = false;
+    //the state of their weapon: 0 = blunderbuss, 1 = revolver rifle, 2 = bear bomb
+    int P1weapon = 0;
     //original angle
     int P1angle = 0;
     //Rotational Commands
@@ -51,6 +57,10 @@ public class ScreenCheat extends JComponent implements KeyListener {
     boolean P2moveBack = false;
     boolean P2moveRight = false;
     boolean P2moveLeft = false;
+    //weapon changer monitor
+    boolean P2changeWeapon = false;
+    //test to see if their weapon has been fired
+    boolean P2shootWeapon = false;
     //original angle
     int P2angle = 0;
     //Rotational Commands
@@ -64,6 +74,10 @@ public class ScreenCheat extends JComponent implements KeyListener {
     
     //create background color
     Color background = new Color(82, 82, 82);
+    
+    
+    final long delayStart = 5*desiredFPS;
+    long gunTimer = delayStart;
 
     // drawing of the game happens in here
     // we use the Graphics object, g, to perform the drawing
@@ -131,13 +145,42 @@ public class ScreenCheat extends JComponent implements KeyListener {
         // the main game loop section
         // game will end if you set done = false;
         boolean done = false;
+        //create a counter that counts down from 5 once player 1 dies
+        
         while (!done) {
             // determines when we started so we can keep a framerate
             startTime = System.currentTimeMillis();
 
             // all your game rules and move is done in here
             // GAME LOGIC STARTS HERE 
+            
             //Player one
+            if(gunTimer > 0){
+                gunTimer--;
+                if(P1changeWeapon = true){
+                    P1weapon = P1weapon ++;
+                    if (P1weapon == 3){
+                        P1weapon = 0;
+                    }
+                }
+            }else if(gunTimer == 0){
+                System.out.println("Respawn: " + System.currentTimeMillis());
+                gunTimer = -1;
+            }else if(gunTimer == -1){
+                P1changeWeapon = false;
+            }
+            
+            
+            //test to see if 
+//            if ((P1Dead = true)&&(changeWeaponCoolDown != 0)){
+//                //
+//                changeWeaponCoolDown = changeWeaponCoolDown - 0.05;
+//                //change P1 from not being dead
+//                P1Dead = false;
+//            }
+            //test to see how long it have been since the player has been dead if < 5 he can be allowed to change
+            
+            
             //test to see if the respective button is being pressed
             if (P1rotateR) {
                 //adjust the angle of the stage correspondingly
@@ -337,6 +380,7 @@ public class ScreenCheat extends JComponent implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
+        
         //Player one
         //test to see if the key has been pressed
         if (key == KeyEvent.VK_W) {
@@ -368,6 +412,16 @@ public class ScreenCheat extends JComponent implements KeyListener {
             //change the state of the boolean from false to true
             P1rotateL = true;
         }
+        //test to see if the key has been pressed
+        if (key == KeyEvent.VK_Z){
+            //change the state of the boolean from false to true
+            P1changeWeapon = true;
+        }
+        //test to see if the key has been pressed
+        if (key == KeyEvent.VK_C){
+            //change the state of the boolean from false to true
+            P1shootWeapon = true;
+        }
 
         //Player two
         if (key == KeyEvent.VK_I) {
@@ -398,6 +452,16 @@ public class ScreenCheat extends JComponent implements KeyListener {
         if (key == KeyEvent.VK_U) {
             //change the state of the boolean from false to true
             P2rotateL = true;
+        }
+        //test to see if the key has been pressed
+        if (key == KeyEvent.VK_N){
+            //change the state of the boolean from false to true
+            P2changeWeapon = true;
+        }
+        //test to see if the key has been pressed
+        if (key == KeyEvent.VK_M){
+            //change the state of the boolean from false to true
+            P2shootWeapon = true;
         }
     }
 
@@ -435,6 +499,16 @@ public class ScreenCheat extends JComponent implements KeyListener {
             //change the state of the boolean from true back to false
             P1rotateL = false;
         }
+        //test to see if the key has been released
+        if (key == KeyEvent.VK_Z){
+            //change the state of the boolean from true to false
+            P1changeWeapon = false;
+        }
+        //test to see if the key has been released
+        if (key == KeyEvent.VK_C){
+            //change the state of the boolean from true to false
+            P1shootWeapon = false;
+        }
 
         //player two
         if (key == KeyEvent.VK_I) {
@@ -465,6 +539,15 @@ public class ScreenCheat extends JComponent implements KeyListener {
         if (key == KeyEvent.VK_U) {
             //change the state of the boolean from true back to false
             P2rotateL = false;
+        }
+        if (key == KeyEvent.VK_N){
+            //change the state of the boolean from true to false
+            P2changeWeapon = false;
+        }
+        //test to see if the key has been released
+        if (key == KeyEvent.VK_M){
+            //change the state of the boolean from true to false
+            P2shootWeapon = false;
         }
     }
 }
