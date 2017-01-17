@@ -173,39 +173,37 @@ public class ScreenCheat extends JComponent implements KeyListener {
             // GAME LOGIC STARTS HERE 
             
             //Player one
-            if(!P1alive){
-                P1gunTimer = 5;
+            if(P1alive == false){
+                P1gunTimer = 5*delayStart;
+                P1alive = true;
             }
-            if(P1gunTimer > 0){
+            if(P1gunTimer > 0 && P1alive == false){
                 P1gunTimer--;
-                if(P1changeWeapon == true && P1changeTimer == 0){
+                if((P1changeWeapon == true) && (P1changeTimer == 0)){
                     P1weapon ++;
                     P1changeTimer = 30;
                     if (P1weapon == 3){
                         P1weapon = 0;
                     }
-                } else {
+                } 
+                if(P1changeTimer > 0){
                     P1changeTimer--;
-                    P1changeTimer = 0;
                 }
             }else if(P1gunTimer == 0){
                 System.out.println("Respawn: " + System.currentTimeMillis());
-                P1gunTimer = -1;
-            }else if(P1gunTimer == -1){
-                P1changeWeapon = false;
-                P1alive = true;
+                P1changeWeapon = false; 
             }
             
             
             //test to see if the player is shooting the weapon and is the blunderbuss
-            if ((P1shootWeapon)&& P1weapon == 0){
-                P1alive = false;
+            if ((P1shootWeapon)&& P1weapon == 0 && P1alive){
+                P2alive = false;
             //test to see if the player is shooting the weapon and is the revolver rifle
-            } else if ((P1shootWeapon)&& P1weapon == 1){
-                P1alive = false;
+            } else if ((P1shootWeapon)&& P1weapon == 1 && P1alive){
+                P2alive = false;
             //test to see if the player is shooting the weapon and is the bear bomb
-            } else if ((P1shootWeapon)&& P1weapon == 2){
-                P1alive = false;
+            } else if ((P1shootWeapon)&& P1weapon == 2 && P1alive){
+                P2alive = false;
             }
             
             //test to see if the respective button is being pressed
@@ -281,39 +279,38 @@ public class ScreenCheat extends JComponent implements KeyListener {
             previousP1yPosition = P1y;
 
             //player 2
-            if(!P2alive){
-                P2gunTimer = 5;
+            if(P2alive == false){
+                P2gunTimer = 5*delayStart;
+                P2alive = true;
             }
-            if(P2gunTimer > 0){
+            if(P2gunTimer > 0 && P2alive == false){
                 P2gunTimer--;
-                if(P2changeWeapon == true && P2changeTimer == 0){
+                if((P2changeWeapon == true) && (P2changeTimer == 0)){
                     P2weapon ++;
                     P2changeTimer = 30;
                     if (P2weapon == 3){
                         P2weapon = 0;
                     }
-                } else {
+                } 
+                if(P2changeTimer > 0){
                     P2changeTimer--;
-                    P2changeTimer = 0;
                 }
             }else if(P2gunTimer == 0){
                 System.out.println("Respawn: " + System.currentTimeMillis());
-                P2gunTimer = -1;
-            }else if(P2gunTimer == -1){
                 P2changeWeapon = false;
-                P2alive = true;
+
             }
             
             
             //test to see if the player is shooting the weapon and is the blunderbuss
-            if ((P2shootWeapon)&& P2weapon == 0){
-                P2alive = false;
+            if ((P2shootWeapon)&& P2weapon == 0 && P2alive){
+                P1alive = false;
             //test to see if the player is shooting the weapon and is the revolver rifle
-            } else if ((P2shootWeapon)&& P2weapon == 1){
-                P2alive = false;
+            } else if ((P2shootWeapon)&& P2weapon == 1 && P2alive){
+                P1alive = false;
             //test to see if the player is shooting the weapon and is the bear bomb
-            } else if ((P2shootWeapon)&& P2weapon == 2){
-                P2alive = false;
+            } else if ((P2shootWeapon)&& P2weapon == 2 && P2alive){
+                P1alive = false;
             }
             //test to see if the respective button is being pressed
             if (P2rotateR) {
@@ -475,7 +472,7 @@ public class ScreenCheat extends JComponent implements KeyListener {
             P1rotateL = true;
         }
         //test to see if the key has been pressed
-        if (key == KeyEvent.VK_Z){
+        if (key == KeyEvent.VK_X){
             //change the state of the boolean from false to true
             P1changeWeapon = true;
         }
@@ -562,7 +559,7 @@ public class ScreenCheat extends JComponent implements KeyListener {
             P1rotateL = false;
         }
         //test to see if the key has been released
-        if (key == KeyEvent.VK_Z){
+        if (key == KeyEvent.VK_X){
             //change the state of the boolean from true to false
             P1changeWeapon = false;
         }
