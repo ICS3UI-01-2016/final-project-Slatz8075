@@ -24,6 +24,9 @@ public class ScreenCheat extends JComponent implements KeyListener {
     long desiredFPS = 60;
     long desiredTime = (1000) / desiredFPS;
     BufferedImage stage = ImageHelper.loadImage("First Stage.png");
+    
+    
+    
     //player one variables
     double P1x = WIDTH / 2 + 35;
     double P1y = HEIGHT / 4;
@@ -46,6 +49,11 @@ public class ScreenCheat extends JComponent implements KeyListener {
     //Rotational Commands
     private boolean P1rotateR;
     private boolean P1rotateL;
+    //state of player 1
+    boolean P1alive = true;
+    
+    
+    
     //player two variables
     double P2x = WIDTH / 2 - 35;
     double P2y = (HEIGHT / 4) * 3;
@@ -61,23 +69,30 @@ public class ScreenCheat extends JComponent implements KeyListener {
     boolean P2changeWeapon = false;
     //test to see if their weapon has been fired
     boolean P2shootWeapon = false;
+    //the state of their weapon: 0 = blunderbuss, 1 = revolver rifle, 2 = bear bomb
+    int P2weapon = 0;
     //original angle
     int P2angle = 0;
     //Rotational Commands
     private boolean P2rotateR;
     private boolean P2rotateL;
-    //creat the out line colors of the stage
+    //state of player 2
+    boolean P2alive = true;
+    
+    
+    
+    //create the out line colors of the stage
     Color orange = new Color(196, 98, 0);
     Color blue = new Color(91, 130, 181);
     Color red = new Color(0, 155, 0);
     Color green = new Color(255, 4, 4);
-    
     //create background color
     Color background = new Color(82, 82, 82);
     
     
     final long delayStart = 5*desiredFPS;
-    long gunTimer = delayStart;
+    long P1gunTimer = delayStart;
+    long P2gunTimer = delayStart;
 
     // drawing of the game happens in here
     // we use the Graphics object, g, to perform the drawing
@@ -155,31 +170,35 @@ public class ScreenCheat extends JComponent implements KeyListener {
             // GAME LOGIC STARTS HERE 
             
             //Player one
-            if(gunTimer > 0){
-                gunTimer--;
-                if(P1changeWeapon = true){
-                    P1weapon = P1weapon ++;
+            if(!P1alive){
+                P1gunTimer = 5;
+            }
+            if(P1gunTimer > 0){
+                P1gunTimer--;
+                if(P1changeWeapon == true){
+                    P1weapon ++;
                     if (P1weapon == 3){
                         P1weapon = 0;
                     }
                 }
-            }else if(gunTimer == 0){
+            }else if(P1gunTimer == 0){
                 System.out.println("Respawn: " + System.currentTimeMillis());
-                gunTimer = -1;
-            }else if(gunTimer == -1){
+                P1gunTimer = -1;
+            }else if(P1gunTimer == -1){
                 P1changeWeapon = false;
             }
             
             
-            //test to see if 
-//            if ((P1Dead = true)&&(changeWeaponCoolDown != 0)){
-//                //
-//                changeWeaponCoolDown = changeWeaponCoolDown - 0.05;
-//                //change P1 from not being dead
-//                P1Dead = false;
-//            }
-            //test to see how long it have been since the player has been dead if < 5 he can be allowed to change
-            
+            //test to see if the player is shooting the weapon and is the blunderbuss
+            if ((P1shootWeapon)&& P1weapon == 0){
+                P2alive = false;
+            //test to see if the player is shooting the weapon and is the revolver rifle
+            } else if ((P1shootWeapon)&& P1weapon == 1){
+                P2alive = false;
+            //test to see if the player is shooting the weapon and is the bear bomb
+            } else if ((P1shootWeapon)&& P1weapon == 2){
+                P2alive = false;
+            }
             
             //test to see if the respective button is being pressed
             if (P1rotateR) {
@@ -254,6 +273,35 @@ public class ScreenCheat extends JComponent implements KeyListener {
             previousP1yPosition = P1y;
 
             //player 2
+            if(!P2alive){
+                P2gunTimer = 5;
+            }
+            if(P2gunTimer > 0){
+                P2gunTimer--;
+                if(P2changeWeapon == true){
+                    P2weapon ++;
+                    if (P2weapon == 3){
+                        P2weapon = 0;
+                    }
+                }
+            }else if(P2gunTimer == 0){
+                System.out.println("Respawn: " + System.currentTimeMillis());
+                P2gunTimer = -1;
+            }else if(P2gunTimer == -1){
+                P2changeWeapon = false;
+            }
+            
+            
+            //test to see if the player is shooting the weapon and is the blunderbuss
+            if ((P2shootWeapon)&& P2weapon == 0){
+                P2alive = false;
+            //test to see if the player is shooting the weapon and is the revolver rifle
+            } else if ((P2shootWeapon)&& P2weapon == 1){
+                P2alive = false;
+            //test to see if the player is shooting the weapon and is the bear bomb
+            } else if ((P2shootWeapon)&& P2weapon == 2){
+                P2alive = false;
+            }
             //test to see if the respective button is being pressed
             if (P2rotateR) {
                 //adjust the angle of the stage correspondingly
@@ -326,6 +374,7 @@ public class ScreenCheat extends JComponent implements KeyListener {
             previousP2xPosition = P2x;
             previousP2yPosition = P2y;
 
+            System.out.println("" + P1weapon + P2weapon);
             // GAME LOGIC ENDS HERE 
 
             // update the drawing (calls paintComponent)
