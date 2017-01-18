@@ -177,7 +177,7 @@ public class ScreenCheat extends JComponent implements KeyListener {
                 P1gunTimer = 5*delayStart;
                 P1alive = true;
             }
-            if(P1gunTimer > 0 && P1alive == false){
+            if(P1gunTimer > 0){
                 P1gunTimer--;
                 if((P1changeWeapon == true) && (P1changeTimer == 0)){
                     P1weapon ++;
@@ -283,7 +283,7 @@ public class ScreenCheat extends JComponent implements KeyListener {
                 P2gunTimer = 5*delayStart;
                 P2alive = true;
             }
-            if(P2gunTimer > 0 && P2alive == false){
+            if(P2gunTimer > 0){
                 P2gunTimer--;
                 if((P2changeWeapon == true) && (P2changeTimer == 0)){
                     P2weapon ++;
