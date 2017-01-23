@@ -137,8 +137,8 @@ public class ScreenCheat extends JComponent implements KeyListener {
         P1bullets[2][0] += P1bullets[2][2];
         P1bullets[2][1] += P1bullets[2][3];
         //for bullet 4
-        P1bullets[2][0] += P1bullets[2][2];
-        P1bullets[2][1] += P1bullets[2][3];
+        P1bullets[3][0] += P1bullets[3][2];
+        P1bullets[3][1] += P1bullets[3][3];
 
         //store the position and rotation of the screen
         AffineTransform P1tx = new AffineTransform();
@@ -374,11 +374,20 @@ public class ScreenCheat extends JComponent implements KeyListener {
                     || stage.getRGB((int) P1bullets[2][0], (int) P1bullets[2][1]) == background.getRGB()
                     || stage.getRGB((int) P1bullets[3][0], (int) P1bullets[3][1]) == background.getRGB())) {
                 //if so stop the bullet from moving
-                P1revolverRifleBulletInMotion = false;
+                P1revolverRifleBulletInMotion = true;
+                P1blunderBussBulletsInMotion = true;
                 //reset the variables for the next shot
                 P1bullets[0][2] = 0;
                 P1bullets[0][3] = 0;
+                P1bullets[1][2] = 0;
+                P1bullets[1][3] = 0;
+                P1bullets[2][2] = 0;
+                P1bullets[2][3] = 0;
+                P1bullets[3][2] = 0;
+                P1bullets[3][3] = 0;
             }
+            
+            
 
             //test to see after all of these transformations if P1 is standing on grey which  don't want him to be on
             if ((stage.getRGB((int) P1x + size, (int) P1y + 5) == background.getRGB()
