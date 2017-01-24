@@ -24,7 +24,6 @@ public class ScreenCheat extends JComponent implements KeyListener {
     long desiredFPS = 60;
     long desiredTime = (1000) / desiredFPS;
     BufferedImage stage = ImageHelper.loadImage("First Stage.png");
-
     //player one variables
     double P1x = WIDTH / 2 + 35;
     double P1y = HEIGHT / 4;
@@ -74,7 +73,11 @@ public class ScreenCheat extends JComponent implements KeyListener {
     boolean P1revolverRifleBulletInMotion = false;
     //boolean for the blunderbuss bullets to be in motion
     boolean P1blunderBussBulletsInMotion = false;
-
+    
+    
+    
+    
+    
     //player two variables
     double P2x = WIDTH / 2 - 35;
     double P2y = (HEIGHT / 4) * 3;
@@ -90,7 +93,7 @@ public class ScreenCheat extends JComponent implements KeyListener {
     boolean P2changeWeapon = false;
     //test to see if their weapon has been fired
     boolean P2shootWeapon = false;
-    //the state of their weapon: 0 = blunderbuss, 1 = revolver rifle, 2 = bear bomb
+    //the state of their weapon: 0 = blunderbuss, 1 = revolver rifle
     int P2weapon = 0;
     //original angle
     int P2angle = 0;
@@ -101,11 +104,10 @@ public class ScreenCheat extends JComponent implements KeyListener {
     boolean P2alive = true;
     //timer for the time inbetween the switching of weapons
     int P2changeTimer = 30;
-
     //create background color
     Color background = new Color(82, 82, 82);
-
-    final int DeathTime = 5;// # of seconds until player respawns
+    // # of seconds until player respawns
+    final int DeathTime = 5;
     final long delayStart = DeathTime * desiredFPS;
     long P1gunTimer = delayStart;
     long P2gunTimer = delayStart;
@@ -127,18 +129,7 @@ public class ScreenCheat extends JComponent implements KeyListener {
 
         //Player one
         //set variable to the bullet array  
-        //for bullet 1
-        P1bullets[0][0] += P1bullets[0][2];
-        P1bullets[0][1] += P1bullets[0][3];
-        //for bullet 2
-        P1bullets[1][0] += P1bullets[1][2];
-        P1bullets[1][1] += P1bullets[1][3];
-        //for bullet 3
-        P1bullets[2][0] += P1bullets[2][2];
-        P1bullets[2][1] += P1bullets[2][3];
-        //for bullet 4
-        P1bullets[3][0] += P1bullets[3][2];
-        P1bullets[3][1] += P1bullets[3][3];
+        
 
         //store the position and rotation of the screen
         AffineTransform P1tx = new AffineTransform();
@@ -160,27 +151,9 @@ public class ScreenCheat extends JComponent implements KeyListener {
         //draw the bullet(s) based on which weapon is beiong used
 
         //test to see if the player is shooting the weapon and is the blunderbuss
-        if ((P1shootWeapon) && P1weapon == 0 && P1alive && P1blunderbussTimer == 120) {
+        if ((P1shootWeapon) && P1weapon == 0 && P1alive && P1blunderbussTimer == 0) {
             //set the bullets to be in motion
             P1blunderBussBulletsInMotion = true;
-            //P1x trajectory for bullet 1 
-            P1bullets[0][2] = P1bulletSpeed * Math.cos(Math.toRadians(-P1angle - 90));
-            //P1y trajectory for bullet 1 
-            P1bullets[0][3] = P1bulletSpeed * Math.sin(Math.toRadians(-P1angle - 90));
-            //P1x trajectory for bullet 2 
-            P1bullets[1][2] = P1bulletSpeed * Math.cos(Math.toRadians((-P1angle + 6) - 90));
-            //P1y trajectory for bullet 2 
-            P1bullets[1][3] = P1bulletSpeed * Math.sin(Math.toRadians((-P1angle + 6) - 90));
-            //P1x trajectory for bullet 3 
-            P1bullets[2][2] = P1bulletSpeed * Math.cos(Math.toRadians((-P1angle - 6) - 90));
-            //P1y trajectory for bullet 3 
-            P1bullets[2][3] = P1bulletSpeed * Math.sin(Math.toRadians((-P1angle - 6) - 90));
-            //P1x trajectory for bullet 4 
-            P1bullets[3][2] = P1bulletSpeed * Math.cos(Math.toRadians((-P1angle + 3) - 90));
-            //P1y trajectory for bullet 4 
-            P1bullets[3][3] = P1bulletSpeed * Math.sin(Math.toRadians((-P1angle + 3) - 90));
-            //murder player 2
-            P2alive = false;
             //start the bullet at the position of the player
             P1bullets[0][0] = P1x;
             P1bullets[0][1] = P1y;
@@ -196,47 +169,13 @@ public class ScreenCheat extends JComponent implements KeyListener {
         } else if ((P1shootWeapon) && P1weapon == 1 && P1alive && P1revolverRifleTimer == 0) {
             //set the bullet to be in motion
             P1revolverRifleBulletInMotion = true;
-            //P1x trajectory for bullet 1 
-            P1bullets[0][2] = P1bulletSpeed * Math.cos(Math.toRadians(-P1angle - 90));
-            //P1y trajectory for bullet 1 
-            P1bullets[0][3] = P1bulletSpeed * Math.sin(Math.toRadians(-P1angle - 90));
-            //murder player 2
-            P2alive = false;
             //start the bullet at the position of the player
             P1bullets[0][0] = P1x;
             P1bullets[0][1] = P1y;
             //restart the timer imbetween shots
             P1revolverRifleTimer = 30;
-            //test to see if the player is shooting the weapon and is the bear bomb
-        } else if ((P1shootWeapon) && P1weapon == 2 && P1alive) {
-            P2alive = false;
-            P1bullets[0][0] += P1bullets[0][2];
-        P1bullets[0][1] += P1bullets[0][3];
-        //for bullet 2
-        P1bullets[1][0] += P1bullets[1][2];
-        P1bullets[1][1] += P1bullets[1][3];
-        //for bullet 3
-        P1bullets[2][0] += P1bullets[2][2];
-        P1bullets[2][1] += P1bullets[2][3];
-        //for bullet 4
-        P1bullets[3][0] += P1bullets[3][2];
-        P1bullets[3][1] += P1bullets[3][3];
+            //test to see if the player is shooting the weapon and is the bear bomb         
         }
-        
-        
-        //test to see if the timer has hit zero or not
-        if (P1revolverRifleTimer > 0) {
-            //if it hasn't subtract one from the timer
-            P1revolverRifleTimer--;
-        }
-        //test to see if the bullet is active
-        if (P1revolverRifleBulletInMotion == true) {
-            g.fillOval((int) P1bullets[0][0] - 5, (int) P1bullets[0][1] - 5, 10, 10);
-            
-
-        }
-        
-        
         
         //test to see if the timer has hit zero or not
         if (P1blunderbussTimer > 0) {
@@ -249,7 +188,55 @@ public class ScreenCheat extends JComponent implements KeyListener {
             g.fillOval((int) P1bullets[1][0] - 5, (int) P1bullets[1][1] - 5, 10, 10);
             g.fillOval((int) P1bullets[2][0] - 5, (int) P1bullets[2][1] - 5, 10, 10);
             g.fillOval((int) P1bullets[3][0] - 5, (int) P1bullets[3][1] - 5, 10, 10);
+            //P1x trajectory for bullet 1 
+            P1bullets[0][2] = P1bulletSpeed * Math.cos(Math.toRadians(-P1angle + (int)(Math.random()*(6 - (-6) + 1)) - 90));
+            //P1y trajectory for bullet 1 
+            P1bullets[0][3] = P1bulletSpeed * Math.sin(Math.toRadians(-P1angle + (int)(Math.random()*(6 - (-6) + 1)) - 90));
+            //P1x trajectory for bullet 2 
+            P1bullets[1][2] = P1bulletSpeed * Math.cos(Math.toRadians(-P1angle - (int)(Math.random()*(6 - (-6) + 1)) - 90));
+            //P1y trajectory for bullet 2 
+            P1bullets[1][3] = P1bulletSpeed * Math.sin(Math.toRadians(-P1angle - (int)(Math.random()*(6 - (-6) + 1)) - 90));
+            //P1x trajectory for bullet 3 
+            P1bullets[2][2] = P1bulletSpeed * Math.cos(Math.toRadians(-P1angle + (int)(Math.random()*(6 - (-6) + 1)) - 90));
+            //P1y trajectory for bullet 3 
+            P1bullets[2][3] = P1bulletSpeed * Math.sin(Math.toRadians(-P1angle + (int)(Math.random()*(6 - (-6) + 1)) - 90));
+            //P1x trajectory for bullet 4 
+            P1bullets[3][2] = P1bulletSpeed * Math.cos(Math.toRadians(-P1angle - (int)(Math.random()*(6 - (-6) + 1)) - 90));
+            //P1y trajectory for bullet 4 
+            P1bullets[3][3] = P1bulletSpeed * Math.sin(Math.toRadians(-P1angle - (int)(Math.random()*(6 - (-6) + 1)) - 90));
+            //murder player 2
+            P2alive = false;
         }
+        //test to see if the timer has hit zero or not
+        if (P1revolverRifleTimer > 0) {
+            //if it hasn't subtract one from the timer
+            P1revolverRifleTimer--;
+        }
+        //test to see if the bullet is active
+        if (P1revolverRifleBulletInMotion == true) {
+            g.fillOval((int) P1bullets[0][0] - 5, (int) P1bullets[0][1] - 5, 10, 10);
+            System.out.println("blah");
+            //P1x trajectory for bullet 1 
+            P1bullets[0][2] = P1bulletSpeed * Math.cos(Math.toRadians(-P1angle - 90));
+            //P1y trajectory for bullet 1 
+            P1bullets[0][3] = P1bulletSpeed * Math.sin(Math.toRadians(-P1angle - 90));
+            //murder player 2
+            P2alive = false;
+        }
+        //make the calculated transformations
+        //for bullet 1
+        P1bullets[0][0] += P1bullets[0][2];
+        P1bullets[0][1] += P1bullets[0][3];
+        //for bullet 2
+        P1bullets[1][0] += P1bullets[1][2];
+        P1bullets[1][1] += P1bullets[1][3];
+        //for bullet 3
+        P1bullets[2][0] += P1bullets[2][2];
+        P1bullets[2][1] += P1bullets[2][3];
+        //for bullet 4
+        P1bullets[3][0] += P1bullets[3][2];
+        P1bullets[3][1] += P1bullets[3][3];
+        
         //setting it back to its original position
         g2d.setTransform(old);
         // undo all transformations
@@ -258,7 +245,6 @@ public class ScreenCheat extends JComponent implements KeyListener {
         g.setColor(Color.BLACK);
         //fill the player at the position
         g.fillRect(WIDTH / 2 - 5, HEIGHT / 4 - 5, 10, 10);
-
         //set the color of the back ground
         g.setColor(background);
         //draw rectangle beneath p2 screen
@@ -316,12 +302,12 @@ public class ScreenCheat extends JComponent implements KeyListener {
                 P1gunTimer--;
                 ////test to see if the playter is pressing the change weapon button and the change weapon timer has run out yet
                 if ((P1changeWeapon == true) && (P1changeTimer == 0)) {
-                    //change the weapon (0 = blunder buss, 1 = revolver rifle, 2 = bear bomb)
+                    //change the weapon (0 = blunder buss, 1 = revolver rifle)
                     P1weapon++;
                     //reset the timer so this if statement will not trigger for the next 1/2 sec
                     P1changeTimer = 30;
                     //test to see if the weapon if #3
-                    if (P1weapon == 3) {
+                    if (P1weapon == 2) {
                         //if so cycle it back to the blunderbuss
                         P1weapon = 0;
                     }
@@ -360,7 +346,6 @@ public class ScreenCheat extends JComponent implements KeyListener {
             //test to see if the respective button is being pressed
             if (P1moveBack) {
                 //adjust the position stage underneath player 1
-
                 P1y = P1y + P1dy;
                 P1x = P1x + P1dx;
             }
@@ -386,8 +371,8 @@ public class ScreenCheat extends JComponent implements KeyListener {
                     || stage.getRGB((int) P1bullets[2][0], (int) P1bullets[2][1]) == background.getRGB()
                     || stage.getRGB((int) P1bullets[3][0], (int) P1bullets[3][1]) == background.getRGB())) {
                 //if so stop the bullet from moving
-                P1revolverRifleBulletInMotion = true;
-                P1blunderBussBulletsInMotion = true;
+                P1revolverRifleBulletInMotion = false;
+                P1blunderBussBulletsInMotion = false;
                 //reset the variables for the next shot
                 P1bullets[0][2] = 0;
                 P1bullets[0][3] = 0;
@@ -398,8 +383,8 @@ public class ScreenCheat extends JComponent implements KeyListener {
                 P1bullets[3][2] = 0;
                 P1bullets[3][3] = 0;
             }
-            
-            
+
+
 
             //test to see after all of these transformations if P1 is standing on grey which  don't want him to be on
             if ((stage.getRGB((int) P1x + size, (int) P1y + 5) == background.getRGB()
