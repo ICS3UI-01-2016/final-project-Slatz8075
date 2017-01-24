@@ -179,6 +179,7 @@ public class ScreenCheat extends JComponent implements KeyListener {
             P1bullets[3][2] = P1bulletSpeed * Math.cos(Math.toRadians((-P1angle + 3) - 90));
             //P1y trajectory for bullet 4 
             P1bullets[3][3] = P1bulletSpeed * Math.sin(Math.toRadians((-P1angle + 3) - 90));
+            //murder player 2
             P2alive = false;
             //start the bullet at the position of the player
             P1bullets[0][0] = P1x;
@@ -199,6 +200,7 @@ public class ScreenCheat extends JComponent implements KeyListener {
             P1bullets[0][2] = P1bulletSpeed * Math.cos(Math.toRadians(-P1angle - 90));
             //P1y trajectory for bullet 1 
             P1bullets[0][3] = P1bulletSpeed * Math.sin(Math.toRadians(-P1angle - 90));
+            //murder player 2
             P2alive = false;
             //start the bullet at the position of the player
             P1bullets[0][0] = P1x;
@@ -208,6 +210,17 @@ public class ScreenCheat extends JComponent implements KeyListener {
             //test to see if the player is shooting the weapon and is the bear bomb
         } else if ((P1shootWeapon) && P1weapon == 2 && P1alive) {
             P2alive = false;
+            P1bullets[0][0] += P1bullets[0][2];
+        P1bullets[0][1] += P1bullets[0][3];
+        //for bullet 2
+        P1bullets[1][0] += P1bullets[1][2];
+        P1bullets[1][1] += P1bullets[1][3];
+        //for bullet 3
+        P1bullets[2][0] += P1bullets[2][2];
+        P1bullets[2][1] += P1bullets[2][3];
+        //for bullet 4
+        P1bullets[3][0] += P1bullets[3][2];
+        P1bullets[3][1] += P1bullets[3][3];
         }
         
         
@@ -219,9 +232,8 @@ public class ScreenCheat extends JComponent implements KeyListener {
         //test to see if the bullet is active
         if (P1revolverRifleBulletInMotion == true) {
             g.fillOval((int) P1bullets[0][0] - 5, (int) P1bullets[0][1] - 5, 10, 10);
-            g.fillOval((int) P1bullets[1][0] - 5, (int) P1bullets[1][1] - 5, 10, 10);
-            g.fillOval((int) P1bullets[2][0] - 5, (int) P1bullets[2][1] - 5, 10, 10);
-            g.fillOval((int) P1bullets[3][0] - 5, (int) P1bullets[3][1] - 5, 10, 10);
+            
+
         }
         
         
