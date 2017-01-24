@@ -39,7 +39,7 @@ public class ScreenCheat extends JComponent implements KeyListener {
     boolean P1changeWeapon = false;
     //test to see if their weapon has been fired
     boolean P1shootWeapon = false;
-    //the state of their weapon: 0 = blunderbuss, 1 = revolver rifle, 2 = bear bomb
+    //the state of their weapon: 0 = blunderbuss, 1 = revolver rifle
     int P1weapon = 0;
     //original angle
     int P1angle = 0;
@@ -73,11 +73,6 @@ public class ScreenCheat extends JComponent implements KeyListener {
     boolean P1revolverRifleBulletInMotion = false;
     //boolean for the blunderbuss bullets to be in motion
     boolean P1blunderBussBulletsInMotion = false;
-    
-    
-    
-    
-    
     //player two variables
     double P2x = WIDTH / 2 - 35;
     double P2y = (HEIGHT / 4) * 3;
@@ -129,7 +124,7 @@ public class ScreenCheat extends JComponent implements KeyListener {
 
         //Player one
         //set variable to the bullet array  
-        
+
 
         //store the position and rotation of the screen
         AffineTransform P1tx = new AffineTransform();
@@ -176,7 +171,7 @@ public class ScreenCheat extends JComponent implements KeyListener {
             P1revolverRifleTimer = 30;
             //test to see if the player is shooting the weapon and is the bear bomb         
         }
-        
+
         //test to see if the timer has hit zero or not
         if (P1blunderbussTimer > 0) {
             //if it hasn't subtract one from the timer
@@ -189,21 +184,34 @@ public class ScreenCheat extends JComponent implements KeyListener {
             g.fillOval((int) P1bullets[2][0] - 5, (int) P1bullets[2][1] - 5, 10, 10);
             g.fillOval((int) P1bullets[3][0] - 5, (int) P1bullets[3][1] - 5, 10, 10);
             //P1x trajectory for bullet 1 
-            P1bullets[0][2] = P1bulletSpeed * Math.cos(Math.toRadians(-P1angle + (int)(Math.random()*(6 - (-6) + 1)) - 90));
+            P1bullets[0][2] = P1bulletSpeed * Math.cos(Math.toRadians(-P1angle + (int) (Math.random() * (6 - (-6) + 1)) - 90));
             //P1y trajectory for bullet 1 
-            P1bullets[0][3] = P1bulletSpeed * Math.sin(Math.toRadians(-P1angle + (int)(Math.random()*(6 - (-6) + 1)) - 90));
+            P1bullets[0][3] = P1bulletSpeed * Math.sin(Math.toRadians(-P1angle + (int) (Math.random() * (6 - (-6) + 1)) - 90));
             //P1x trajectory for bullet 2 
-            P1bullets[1][2] = P1bulletSpeed * Math.cos(Math.toRadians(-P1angle - (int)(Math.random()*(6 - (-6) + 1)) - 90));
+            P1bullets[1][2] = P1bulletSpeed * Math.cos(Math.toRadians(-P1angle - (int) (Math.random() * (6 - (-6) + 1)) - 90));
             //P1y trajectory for bullet 2 
-            P1bullets[1][3] = P1bulletSpeed * Math.sin(Math.toRadians(-P1angle - (int)(Math.random()*(6 - (-6) + 1)) - 90));
+            P1bullets[1][3] = P1bulletSpeed * Math.sin(Math.toRadians(-P1angle - (int) (Math.random() * (6 - (-6) + 1)) - 90));
             //P1x trajectory for bullet 3 
-            P1bullets[2][2] = P1bulletSpeed * Math.cos(Math.toRadians(-P1angle + (int)(Math.random()*(6 - (-6) + 1)) - 90));
+            P1bullets[2][2] = P1bulletSpeed * Math.cos(Math.toRadians(-P1angle + (int) (Math.random() * (6 - (-6) + 1)) - 90));
             //P1y trajectory for bullet 3 
-            P1bullets[2][3] = P1bulletSpeed * Math.sin(Math.toRadians(-P1angle + (int)(Math.random()*(6 - (-6) + 1)) - 90));
+            P1bullets[2][3] = P1bulletSpeed * Math.sin(Math.toRadians(-P1angle + (int) (Math.random() * (6 - (-6) + 1)) - 90));
             //P1x trajectory for bullet 4 
-            P1bullets[3][2] = P1bulletSpeed * Math.cos(Math.toRadians(-P1angle - (int)(Math.random()*(6 - (-6) + 1)) - 90));
+            P1bullets[3][2] = P1bulletSpeed * Math.cos(Math.toRadians(-P1angle - (int) (Math.random() * (6 - (-6) + 1)) - 90));
             //P1y trajectory for bullet 4 
-            P1bullets[3][3] = P1bulletSpeed * Math.sin(Math.toRadians(-P1angle - (int)(Math.random()*(6 - (-6) + 1)) - 90));
+            P1bullets[3][3] = P1bulletSpeed * Math.sin(Math.toRadians(-P1angle - (int) (Math.random() * (6 - (-6) + 1)) - 90));
+            //make the calculated transformations
+            //for bullet 1
+            P1bullets[0][0] += P1bullets[0][2];
+            P1bullets[0][1] += P1bullets[0][3];
+            //for bullet 2
+            P1bullets[1][0] += P1bullets[1][2];
+            P1bullets[1][1] += P1bullets[1][3];
+            //for bullet 3
+            P1bullets[2][0] += P1bullets[2][2];
+            P1bullets[2][1] += P1bullets[2][3];
+            //for bullet 4
+            P1bullets[3][0] += P1bullets[3][2];
+            P1bullets[3][1] += P1bullets[3][3];
             //murder player 2
             P2alive = false;
         }
@@ -215,28 +223,19 @@ public class ScreenCheat extends JComponent implements KeyListener {
         //test to see if the bullet is active
         if (P1revolverRifleBulletInMotion == true) {
             g.fillOval((int) P1bullets[0][0] - 5, (int) P1bullets[0][1] - 5, 10, 10);
-            System.out.println("blah");
             //P1x trajectory for bullet 1 
             P1bullets[0][2] = P1bulletSpeed * Math.cos(Math.toRadians(-P1angle - 90));
             //P1y trajectory for bullet 1 
             P1bullets[0][3] = P1bulletSpeed * Math.sin(Math.toRadians(-P1angle - 90));
+            //make the calculated transformations
+            //for bullet 1
+            P1bullets[0][0] += P1bullets[0][2];
+            P1bullets[0][1] += P1bullets[0][3];
             //murder player 2
             P2alive = false;
         }
-        //make the calculated transformations
-        //for bullet 1
-        P1bullets[0][0] += P1bullets[0][2];
-        P1bullets[0][1] += P1bullets[0][3];
-        //for bullet 2
-        P1bullets[1][0] += P1bullets[1][2];
-        P1bullets[1][1] += P1bullets[1][3];
-        //for bullet 3
-        P1bullets[2][0] += P1bullets[2][2];
-        P1bullets[2][1] += P1bullets[2][3];
-        //for bullet 4
-        P1bullets[3][0] += P1bullets[3][2];
-        P1bullets[3][1] += P1bullets[3][3];
-        
+
+
         //setting it back to its original position
         g2d.setTransform(old);
         // undo all transformations
@@ -391,7 +390,7 @@ public class ScreenCheat extends JComponent implements KeyListener {
                     || stage.getRGB((int) P1x + size, (int) P1y - 5) == background.getRGB()
                     || stage.getRGB((int) P1x - size, (int) P1y + 5) == background.getRGB()
                     || stage.getRGB((int) P1x - size, (int) P1y - 5) == background.getRGB())) {
-                //if he is tele port him back to his previous position
+                //if he is teleport him back to his previous position
                 P1x = previousP1xPosition;
                 P1y = previousP1yPosition;
             }
