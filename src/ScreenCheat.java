@@ -123,9 +123,7 @@ public class ScreenCheat extends JComponent implements KeyListener {
         // GAME DRAWING GOES HERE
 
         //Player one
-        //set variable to the bullet array  
-
-
+        //set variable to the bullet array
         //store the position and rotation of the screen
         AffineTransform P1tx = new AffineTransform();
         //rotate the screen based on the angle
@@ -228,12 +226,13 @@ public class ScreenCheat extends JComponent implements KeyListener {
             //P1y trajectory for bullet 1 
             P1bullets[0][3] = P1bulletSpeed * Math.sin(Math.toRadians(-P1angle - 90));
             //make the calculated transformations
-            //for bullet 1
-            P1bullets[0][0] += P1bullets[0][2];
-            P1bullets[0][1] += P1bullets[0][3];
+
             //murder player 2
             P2alive = false;
         }
+        //for bullet 1 Why this must be out side of the if statements Idont know bu it works
+        P1bullets[0][0] += P1bullets[0][2];
+        P1bullets[0][1] += P1bullets[0][3];
 
 
         //setting it back to its original position
