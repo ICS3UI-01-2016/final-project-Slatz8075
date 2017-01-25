@@ -24,6 +24,7 @@ public class ScreenCheat extends JComponent implements KeyListener {
     long desiredFPS = 60;
     long desiredTime = (1000) / desiredFPS;
     BufferedImage stage = ImageHelper.loadImage("First Stage.png");
+
     //player one variables
     double P1x = WIDTH / 2 + 35;
     double P1y = HEIGHT / 4;
@@ -50,6 +51,8 @@ public class ScreenCheat extends JComponent implements KeyListener {
     boolean P1alive = true;
     //timer for the time inbetween the switching of weapons
     int P1changeTimer = 30;
+    //integer for a random respawn spot
+    int P1randomRespawn = 0;
     //variable speed
     double P1speed = 2;
     //Dx and Dy of P1
@@ -73,6 +76,7 @@ public class ScreenCheat extends JComponent implements KeyListener {
     boolean P1revolverRifleBulletInMotion = false;
     //boolean for the blunderbuss bullets to be in motion
     boolean P1blunderBussBulletsInMotion = false;
+
     //player two variables
     double P2x = WIDTH / 2 - 35;
     double P2y = (HEIGHT / 4) * 3;
@@ -99,6 +103,30 @@ public class ScreenCheat extends JComponent implements KeyListener {
     boolean P2alive = true;
     //timer for the time inbetween the switching of weapons
     int P2changeTimer = 30;
+    //integer for a random respawn spot
+    int P2randomRespawn = 0;
+    //variable speed
+    double P2speed = 2;
+    //Dx and Dy of P2
+    double P2dy = P2speed * (Math.cos(Math.toRadians(P2angle)));
+    double P2dx = P2speed * (Math.sin(Math.toRadians(P2angle)));
+    //speed of bullet
+    double P2bulletSpeed = 6.5;
+    //array for speed and position of P2's bullets
+    //p2bullets[0][0] = the x co-ord of the first bullet
+    //p2bullets[0][1] = the y co-ord of the first bullet
+    //p2bullets[0][2] = the dx (speed) first bullet
+    //p2bullets[0][3] = the dy (speed) of the first bullet
+    double P2bullets[][] = new double[4][4];
+    //counter for the revolver rifle
+    int P2revolverRifleTimer = 0;
+    //counter for the blunderbuss
+    int P2blunderbussTimer = 0;
+    //boolean for the revolver bullet in motion
+    boolean P2revolverRifleBulletInMotion = false;
+    //boolean for the blunderbuss bullets to be in motion
+    boolean P2blunderBussBulletsInMotion = false;
+
     //create background color
     Color background = new Color(82, 82, 82);
     // # of seconds until player respawns
@@ -106,6 +134,8 @@ public class ScreenCheat extends JComponent implements KeyListener {
     final long delayStart = DeathTime * desiredFPS;
     long P1gunTimer = delayStart;
     long P2gunTimer = delayStart;
+    int P1scoreTracker = 0;
+    int P2scoreTracker = 0;
 
     // drawing of the game happens in here
     // we use the Graphics object, g, to perform the drawing
@@ -136,7 +166,7 @@ public class ScreenCheat extends JComponent implements KeyListener {
         //draw the stage
         g2d.drawImage(stage, P1tx, null);
         //take old tranformation so I may change it back to it later
-        AffineTransform old = g2d.getTransform();
+        AffineTransform P1old = g2d.getTransform();
         //set the color of the bullet                       http://stackoverflow.com/questions/14124593/how-to-rotate-graphics-in-java
         g.setColor(Color.WHITE);
         //sets the transformation to the same as the stage 
@@ -158,6 +188,8 @@ public class ScreenCheat extends JComponent implements KeyListener {
             P1bullets[3][1] = P1y;
             //restart the timer imbetween shots
             P1blunderbussTimer = 120;
+            //murder player 2
+            P2alive = false;   
             //test to see if the player is shooting the weapon and is the revolver rifle
         } else if ((P1shootWeapon) && P1weapon == 1 && P1alive && P1revolverRifleTimer == 0) {
             //set the bullet to be in motion
@@ -167,7 +199,8 @@ public class ScreenCheat extends JComponent implements KeyListener {
             P1bullets[0][1] = P1y;
             //restart the timer imbetween shots
             P1revolverRifleTimer = 30;
-            //test to see if the player is shooting the weapon and is the bear bomb         
+            //murder player 2
+            P2alive = false;         
         }
 
         //test to see if the timer has hit zero or not
@@ -210,8 +243,6 @@ public class ScreenCheat extends JComponent implements KeyListener {
             //for bullet 4
             P1bullets[3][0] += P1bullets[3][2];
             P1bullets[3][1] += P1bullets[3][3];
-            //murder player 2
-            P2alive = false;
         }
         //test to see if the timer has hit zero or not
         if (P1revolverRifleTimer > 0) {
@@ -226,17 +257,17 @@ public class ScreenCheat extends JComponent implements KeyListener {
             //P1y trajectory for bullet 1 
             P1bullets[0][3] = P1bulletSpeed * Math.sin(Math.toRadians(-P1angle - 90));
             //make the calculated transformations
-
-            //murder player 2
-            P2alive = false;
+            //for bullet 1
+            P1bullets[0][0] += P1bullets[0][2];
+            P1bullets[0][1] += P1bullets[0][3];
+            
         }
-        //for bullet 1 Why this must be out side of the if statements Idont know bu it works
+        //for bullet 1 Why this must be out side of the if statements I dont know but it works
         P1bullets[0][0] += P1bullets[0][2];
         P1bullets[0][1] += P1bullets[0][3];
 
-
         //setting it back to its original position
-        g2d.setTransform(old);
+        g2d.setTransform(P1old);
         // undo all transformations
         P1tx.setToIdentity();
         //set the color of the player
@@ -250,19 +281,126 @@ public class ScreenCheat extends JComponent implements KeyListener {
         g.clipRect(0, HEIGHT / 2, WIDTH, HEIGHT / 2);
 
         //Player two
-        //g.clipRect(0, (HEIGHT/2), WIDTH, HEIGHT / 2);
+        //set variable to the bullet array
+        //store the position and rotation of the screen
         AffineTransform P2tx = new AffineTransform();
+        //rotate the screen based on the angle
         P2tx.rotate(Math.toRadians(P2angle), P2x, P2y);
         // calculate new center of the screen after a rotation has occured
         double newP2Y = (((HEIGHT / 4) * 3 - P2y) * Math.cos(Math.toRadians(P2angle)) - (WIDTH / 2 - P2x) * Math.sin(Math.toRadians(P2angle)));
         double newP2X = (((HEIGHT / 4) * 3 - P2y) * Math.sin(Math.toRadians(P2angle)) + (WIDTH / 2 - P2x) * Math.cos(Math.toRadians(P2angle)));
         // translate to the new location
         P2tx.translate(newP2X, newP2Y);
+        //draw the stage
         g2d.drawImage(stage, P2tx, null);
+        //take old tranformation so I may change it back to it later
+        AffineTransform P2old = g2d.getTransform();
+        //set the color of the bullet                       http://stackoverflow.com/questions/14124593/how-to-rotate-graphics-in-java
+        g.setColor(Color.WHITE);
+        //sets the transformation to the same as the stage 
+        g2d.setTransform(P2tx);
+        //draw the bullet(s) based on which weapon is beiong used
+
+        //test to see if the player is shooting the weapon and is the blunderbuss
+        if ((P2shootWeapon) && P2weapon == 0 && P2alive && P2blunderbussTimer == 0) {
+            //set the bullets to be in motion
+            P2blunderBussBulletsInMotion = true;
+            //start the bullet at the position of the player
+            P2bullets[0][0] = P2x;
+            P2bullets[0][1] = P2y;
+            P2bullets[1][0] = P2x;
+            P2bullets[1][1] = P2y;
+            P2bullets[2][0] = P2x;
+            P2bullets[2][1] = P2y;
+            P2bullets[3][0] = P2x;
+            P2bullets[3][1] = P2y;
+            //restart the timer imbetween shots
+            P2blunderbussTimer = 120;
+            //murder player 1
+            P1alive = false;
+            //test to see if the player is shooting the weapon and is the revolver rifle
+        } else if ((P2shootWeapon) && P2weapon == 1 && P2alive && P2revolverRifleTimer == 0) {
+            //set the bullet to be in motion
+            P2revolverRifleBulletInMotion = true;
+            //start the bullet at the position of the player
+            P2bullets[0][0] = P2x;
+            P2bullets[0][1] = P2y;
+            //restart the timer imbetween shots
+            P2revolverRifleTimer = 30;
+            //murder player 1
+            P1alive = false;
+        }
+
+        //test to see if the timer has hit zero or not
+        if (P2blunderbussTimer > 0) {
+            //if it hasn't subtract one from the timer
+            P2blunderbussTimer--;
+        }
+        //test to see if the bullet is active
+        if (P2blunderBussBulletsInMotion == true) {
+            g.fillOval((int) P2bullets[0][0] - 5, (int) P2bullets[0][1] - 5, 10, 10);
+            g.fillOval((int) P2bullets[1][0] - 5, (int) P2bullets[1][1] - 5, 10, 10);
+            g.fillOval((int) P2bullets[2][0] - 5, (int) P2bullets[2][1] - 5, 10, 10);
+            g.fillOval((int) P2bullets[3][0] - 5, (int) P2bullets[3][1] - 5, 10, 10);
+            //P2x trajectory for bullet 1 
+            P2bullets[0][2] = P2bulletSpeed * Math.cos(Math.toRadians(-P2angle + (int) (Math.random() * (6 - (-6) + 1)) - 90));
+            //P2y trajectory for bullet 1 
+            P2bullets[0][3] = P2bulletSpeed * Math.sin(Math.toRadians(-P2angle + (int) (Math.random() * (6 - (-6) + 1)) - 90));
+            //P2x trajectory for bullet 2 
+            P2bullets[1][2] = P2bulletSpeed * Math.cos(Math.toRadians(-P2angle - (int) (Math.random() * (6 - (-6) + 1)) - 90));
+            //P2y trajectory for bullet 2 
+            P2bullets[1][3] = P2bulletSpeed * Math.sin(Math.toRadians(-P2angle - (int) (Math.random() * (6 - (-6) + 1)) - 90));
+            //P2x trajectory for bullet 3 
+            P2bullets[2][2] = P2bulletSpeed * Math.cos(Math.toRadians(-P2angle + (int) (Math.random() * (6 - (-6) + 1)) - 90));
+            //P2y trajectory for bullet 3 
+            P2bullets[2][3] = P2bulletSpeed * Math.sin(Math.toRadians(-P2angle + (int) (Math.random() * (6 - (-6) + 1)) - 90));
+            //P2x trajectory for bullet 4 
+            P2bullets[3][2] = P2bulletSpeed * Math.cos(Math.toRadians(-P2angle - (int) (Math.random() * (6 - (-6) + 1)) - 90));
+            //P2y trajectory for bullet 4 
+            P2bullets[3][3] = P2bulletSpeed * Math.sin(Math.toRadians(-P2angle - (int) (Math.random() * (6 - (-6) + 1)) - 90));
+            //make the calculated transformations
+            //for bullet 1
+            P2bullets[0][0] += P2bullets[0][2];
+            P2bullets[0][1] += P2bullets[0][3];
+            //for bullet 2
+            P2bullets[1][0] += P2bullets[1][2];
+            P2bullets[1][1] += P2bullets[1][3];
+            //for bullet 3
+            P2bullets[2][0] += P2bullets[2][2];
+            P2bullets[2][1] += P2bullets[2][3];
+            //for bullet 4
+            P2bullets[3][0] += P2bullets[3][2];
+            P2bullets[3][1] += P2bullets[3][3];
+        }
+        //test to see if the timer has hit zero or not
+        if (P2revolverRifleTimer > 0) {
+            //if it hasn't subtract one from the timer
+            P2revolverRifleTimer--;
+        }
+        //test to see if the bullet is active
+        if (P2revolverRifleBulletInMotion == true) {
+            g.fillOval((int) P2bullets[0][0] - 5, (int) P2bullets[0][1] - 5, 10, 10);
+            //P2x trajectory for bullet 1 
+            P2bullets[0][2] = P2bulletSpeed * Math.cos(Math.toRadians(-P2angle - 90));
+            //P2y trajectory for bullet 1 
+            P2bullets[0][3] = P2bulletSpeed * Math.sin(Math.toRadians(-P2angle - 90));
+            //make the calculated transformations
+        }
+        //for bullet 1 Why this must be out side of the if statements I dont know but it works
+        P2bullets[0][0] += P2bullets[0][2];
+        P2bullets[0][1] += P2bullets[0][3];
+
+        //setting it back to its original position
+        g2d.setTransform(P2old);
         // undo all transformations
         P2tx.setToIdentity();
+        //set the color of the player
         g.setColor(Color.BLACK);
+        //fill the player at the position
         g.fillRect(WIDTH / 2 - 5, (HEIGHT / 4) * 3 - 5, 10, 10);
+        
+        
+
         // GAME DRAWING ENDS HERE
     }
 
@@ -291,10 +429,33 @@ public class ScreenCheat extends JComponent implements KeyListener {
             if (P1alive == false) {
                 //if he is start a 5 sec timer
                 P1gunTimer = delayStart;
-                //turn his sttus back to alive
+                //generate a random respawn point
+                P1randomRespawn = P1randomRespawn + 1;
+                //test to see if this has surpassed the number of respawn points
+                if (P1randomRespawn == 3) {
+                    //cycle it back to the first respawn point
+                    P1randomRespawn = 0;
+                }
+                //check to see if 
+                if (P1randomRespawn == 0) {
+                    //reset their position
+                    P1x = 600;
+                    P1y = 160;
+                } else if (P1randomRespawn == 1) {
+                    //reset their position
+                    P1x = 160;
+                    P1y = 600;
+                } else if (P1randomRespawn == 2) {
+                    //reset their position
+                    P1x = 160;
+                    P1y = 160;
+                }
+                //add on to the score counter of player 2
+                P2scoreTracker++;
+                //turn his status back to alive
                 P1alive = true;
             }
-            //test to see ift he timer has run out yet
+            //test to see if the timer has run out yet
             if (P1gunTimer > 0) {
                 //subtract one millisec from the timer
                 P1gunTimer--;
@@ -316,7 +477,7 @@ public class ScreenCheat extends JComponent implements KeyListener {
                     P1changeTimer--;
                 }
             } else if (P1gunTimer == 0) {
-                System.out.println("Respawn: P1 is alive");
+                //make it so they cannot change their weapon
                 P1changeWeapon = false;
             }
             //test to see if the respective button is being pressed
@@ -381,9 +542,6 @@ public class ScreenCheat extends JComponent implements KeyListener {
                 P1bullets[3][2] = 0;
                 P1bullets[3][3] = 0;
             }
-
-
-
             //test to see after all of these transformations if P1 is standing on grey which  don't want him to be on
             if ((stage.getRGB((int) P1x + size, (int) P1y + 5) == background.getRGB()
                     || stage.getRGB((int) P1x + size, (int) P1y - 5) == background.getRGB()
@@ -398,98 +556,152 @@ public class ScreenCheat extends JComponent implements KeyListener {
             previousP1yPosition = P1y;
 
             //player 2
+            //respawn logic
+            //test to see if player one is dead
             if (P2alive == false) {
+                //if he is start a 5 sec timer
                 P2gunTimer = delayStart;
+                //generate a random respawn point
+                P2randomRespawn = P2randomRespawn + 1;
+                //test to see if this has surpassed the number of respawn points
+                if (P2randomRespawn == 3) {
+                    //cycle it back to the first respawn point
+                    P2randomRespawn = 0;
+                }
+                //check to see if 
+                if (P2randomRespawn == 0) {
+                    //reset their position
+                    P2x = 600;
+                    P2y = 160;
+                } else if (P2randomRespawn == 1) {
+                    //reset their position
+                    P2x = 160;
+                    P2y = 600;
+                } else if (P2randomRespawn == 2) {
+                    //reset their position
+                    P2x = 160;
+                    P2y = 160;
+                }
+                //add on to the score counter of player 1
+                P1scoreTracker++;
+                //turn his status back to alive
                 P2alive = true;
             }
+            //test to see ift he timer has run out yet
             if (P2gunTimer > 0) {
+                //subtract one millisec from the timer
                 P2gunTimer--;
+                ////test to see if the playter is pressing the change weapon button and the change weapon timer has run out yet
                 if ((P2changeWeapon == true) && (P2changeTimer == 0)) {
+                    //change the weapon (0 = blunder buss, 1 = revolver rifle)
                     P2weapon++;
+                    //reset the timer so this if statement will not trigger for the next 1/2 sec
                     P2changeTimer = 30;
-                    if (P2weapon == 3) {
+                    //test to see if the weapon if #3
+                    if (P2weapon == 2) {
+                        //if so cycle it back to the blunderbuss
                         P2weapon = 0;
                     }
                 }
+                //test to see if the player is allowed to change their weapon yet
                 if (P2changeTimer > 0) {
+                    // if not subtract one ffrom the timer
                     P2changeTimer--;
                 }
             } else if (P2gunTimer == 0) {
-                System.out.println("Respawn: " + System.currentTimeMillis());
+                //make it so they cannot change their weapon
                 P2changeWeapon = false;
-
-            }
-
-            //test to see if the player is shooting the weapon and is the blunderbuss
-            if ((P2shootWeapon) && P2weapon == 0 && P2alive) {
-                P1alive = false;
-                //test to see if the player is shooting the weapon and is the revolver rifle
-            } else if ((P2shootWeapon) && P2weapon == 1 && P2alive) {
-                P1alive = false;
-                //test to see if the player is shooting the weapon and is the bear bomb
-            } else if ((P2shootWeapon) && P2weapon == 2 && P2alive) {
-                P1alive = false;
             }
             //test to see if the respective button is being pressed
             if (P2rotateR) {
                 //adjust the angle of the stage correspondingly
-                P2angle = (P2angle - 2) % 360;
+                P2angle = (P2angle - (int) P2speed) % 360;
             }
             //test to see if the respective button is being pressed
             if (P2rotateL) {
                 //adjust the angle of the stage correspondingly
-                P2angle = (P2angle + 2) % 360;
+                P2angle = (P2angle + (int) P2speed) % 360;
             }
             if (P2angle < 0) {
                 P2angle = 360 + P2angle;
             }
-
-            double P2dy = (Math.cos(Math.toRadians(P2angle)));
-            double P2dx = (Math.sin(Math.toRadians(P2angle)));
+            P2dy = P2speed * (Math.cos(Math.toRadians(P2angle)));
+            P2dx = P2speed * (Math.sin(Math.toRadians(P2angle)));
 
             //test to see if the respective button is being pressed
             if (P2moveForward) {
-                //adjust the position stage underneath player 2
+                //adjust the position stage underneath player 1
                 P2y = P2y - P2dy;
                 P2x = P2x - P2dx;
             }
             //test to see if the respective button is being pressed
             if (P2moveBack) {
-                //adjust the position stage underneath player 2
-
+                //adjust the position stage underneath player 1
                 P2y = P2y + P2dy;
                 P2x = P2x + P2dx;
             }
             //test to see if the respective button is being pressed
             if (P2moveRight) {
-                //adjust the position stage underneath player 2
-                double P2dyr = (Math.cos(Math.toRadians(P2angle + 90)));
-                double P2dxr = (Math.sin(Math.toRadians(P2angle + 90)));
+                //adjust the position stage underneath player 1
+                double P2dyr = P2speed * (Math.cos(Math.toRadians(P2angle + 90)));
+                double P2dxr = P2speed * (Math.sin(Math.toRadians(P2angle + 90)));
                 P2y = P2y + P2dyr;
                 P2x = P2x + P2dxr;
             }
             //test to see if the respective button is being pressed
             if (P2moveLeft) {
-                //adjust the position stage underneath player 2
-                double P2dyl = (Math.cos(Math.toRadians(P2angle - 90)));
-                double P2dxl = (Math.sin(Math.toRadians(P2angle - 90)));
+                //adjust the position stage underneath player 1
+                double P2dyl = P2speed * (Math.cos(Math.toRadians(P2angle - 90)));
+                double P2dxl = P2speed * (Math.sin(Math.toRadians(P2angle - 90)));
                 P2y = P2y + P2dyl;
                 P2x = P2x + P2dxl;
+            }
+            //test to see if the bullet touches the border
+            if ((stage.getRGB((int) P2bullets[0][0], (int) P2bullets[0][1]) == background.getRGB()
+                    || stage.getRGB((int) P2bullets[1][0], (int) P2bullets[1][1]) == background.getRGB()
+                    || stage.getRGB((int) P2bullets[2][0], (int) P2bullets[2][1]) == background.getRGB()
+                    || stage.getRGB((int) P2bullets[3][0], (int) P2bullets[3][1]) == background.getRGB())) {
+                //if so stop the bullet from moving
+                P2revolverRifleBulletInMotion = false;
+                P2blunderBussBulletsInMotion = false;
+                //reset the variables for the next shot
+                P2bullets[0][2] = 0;
+                P2bullets[0][3] = 0;
+                P2bullets[1][2] = 0;
+                P2bullets[1][3] = 0;
+                P2bullets[2][2] = 0;
+                P2bullets[2][3] = 0;
+                P2bullets[3][2] = 0;
+                P2bullets[3][3] = 0;
             }
             //test to see after all of these transformations if P2 is standing on grey which  don't want him to be on
             if ((stage.getRGB((int) P2x + size, (int) P2y + 5) == background.getRGB()
                     || stage.getRGB((int) P2x + size, (int) P2y - 5) == background.getRGB()
                     || stage.getRGB((int) P2x - size, (int) P2y + 5) == background.getRGB()
                     || stage.getRGB((int) P2x - size, (int) P2y - 5) == background.getRGB())) {
-                //if he is tele port him back to his previous position
+                //if he is teleport him back to his previous position
                 P2x = previousP2xPosition;
                 P2y = previousP2yPosition;
             }
             //record the x and y position of P2 so I can teleport him back to this if he moves in the next game frame
             previousP2xPosition = P2x;
             previousP2yPosition = P2y;
-
-            System.out.println("Player one weapon: " + P1weapon + " Player two weapon: " + P2weapon);
+            
+            //tell each player which weapon they are currently using and display each players score
+            System.out.println("P1weapon: " + P1weapon + ", P1score: " + P1scoreTracker + ", P2weapon: " + P2weapon + ", P2score: " + P2scoreTracker);
+            //check to see if either player 1 or 2 has reached the score of 5 
+            if (P1scoreTracker == 10) {
+                //if so tell the players
+                System.out.println("Player one wins!");
+                //and end the game
+                done = true;
+            }
+            if (P2scoreTracker == 10) {  
+                //if so tell the players
+                System.out.println("Player two wins!");
+                //and end the game
+                done = true;
+            }
             // GAME LOGIC ENDS HERE 
 
             // update the drawing (calls paintComponent)
